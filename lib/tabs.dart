@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stockSimulator/home.dart';
 import 'package:stockSimulator/portfolio.dart';
 
 class Tabs extends StatefulWidget {
@@ -9,6 +10,7 @@ class Tabs extends StatefulWidget {
 class _TabsState extends State<Tabs>
     with SingleTickerProviderStateMixin {
   final List<Tab> myTabs = <Tab>[
+    Tab(text: 'HOME',),
     Tab(text: 'PORTFOLIO'),
     Tab(text: 'RIGHT'),
   ];
@@ -39,7 +41,7 @@ class _TabsState extends State<Tabs>
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Put things here
+          Text('^g^'),
           Text('^>^'),
           Text('^.^')
         ]
