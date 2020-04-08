@@ -39,8 +39,9 @@ class _TabsState extends State<Tabs>
       body: TabBarView(
         controller: _tabController,
         children: [
-          Portfolio(),
-          Portfolio(),
+          // Put things here
+          Text('^>^'),
+          Text('^.^')
         ]
       ),
     );

@@ -1,44 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockSimulator/portfolioCard.dart';
+import 'package:http/http.dart' as http;
+import 'models/stock.dart';
 
 class Portfolio extends StatelessWidget {
+  String id;
+
+  Portfolio() {
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      this.id = prefs.getString('id');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-          children: <Widget>[
-            PortfolioCard(
-              
-              child: ListTile(
-                title: Container(color: Colors.black38, width: 2,),
-                leading: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                  Text('AAPL'),
-                  Text('Apple Inc.', style: TextStyle(fontSize: 11),)
-                ]),
-                trailing: Icon(Icons.arrow_drop_up, color: Colors.green),
-              )
-            ),
+    return FutureBuilder(
+        future: http.get('http://bloblet.com:4000/portfolio?id=${this.id}'),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          List<Stock> data = [];
+          snapshot.data.forEach((key, value) {
+            data.add(Stock());
+          });
+          data.sort((Stock a, Stock b) => a.symbol.compareTo(b.symbol));
 
-            SizedBox(height: 8),
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
 
-            PortfolioCard(
-              child: ListTile(
-                title: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                  Text('MSFT'),
-                  Text('Microsoft Corporation', style: TextStyle(fontSize: 11),)
-                ],),
-                trailing: Icon(Icons.arrow_drop_down, color: Colors.red),
-              )
-            ),
-          ]
-        ),
-    );
+              itemCount: data.length,
+              itemBuilder: (BuildContext context, int position) {
+                return PortfolioCard(data[position]);
+            })
+          );
+        });
   }
 }
