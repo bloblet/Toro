@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stockSimulator/home.dart';
 import 'package:stockSimulator/portfolio.dart';
 
 class Tabs extends StatefulWidget {

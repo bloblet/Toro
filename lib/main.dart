@@ -8,6 +8,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Tabs());
+        title: 'PyMarkets',
+        theme: ThemeData(
+          primaryColor: Colors.green,
+          scaffoldBackgroundColor: Colors.white,
+        ),
+        home: Tabs(),
+    );
   }
 }
