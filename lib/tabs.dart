@@ -11,7 +11,6 @@ class _TabsState extends State<Tabs>
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'PORTFOLIO'),
     Tab(text: 'RIGHT'),
-    Tab(text: 'HOME'),
   ];
 
   TabController _tabController;
