@@ -9,30 +9,33 @@ class PortfolioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: ShapeDecoration(
-          shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          color: Colors.grey[300],
-        ),
-        child: ListTile(
-          title: Expanded(
-            child: Container(
-              color: Colors.black38,
-              width: 2,
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+          decoration: ShapeDecoration(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            color: Colors.grey[300],
           ),
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('AAPL'),
-              Text(
-                'Apple Inc.',
-                style: TextStyle(fontSize: 11),
-              )
-            ]),
-          trailing: Icon(Icons.arrow_drop_up, color: Colors.green),
-        ));
+          child: ListTile(
+
+            title: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Symbol
+                  Text(this.stock.symbol),
+                  Text(
+                    // Name
+                    this.stock.name,
+                    style: TextStyle(fontSize: 11),
+                  )
+                ]),
+            // Change indicator
+            trailing: (this.stock.changesPercentage > 0)
+                ? Icon(Icons.arrow_upward, color: Colors.green)
+                : Icon(Icons.arrow_downward, color: Colors.red),
+          )),
+    );
   }
 }

@@ -6,11 +6,12 @@ class Tabs extends StatefulWidget {
   _TabsState createState() => _TabsState();
 }
 
-class _TabsState extends State<Tabs>
-    with SingleTickerProviderStateMixin {
+class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
+  // Here
   final List<Tab> myTabs = <Tab>[
+    Tab(text: 'HOME'),
     Tab(text: 'PORTFOLIO'),
-    Tab(text: 'RIGHT'),
+    
   ];
 
   TabController _tabController;
@@ -36,14 +37,14 @@ class _TabsState extends State<Tabs>
           tabs: myTabs,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Put things here
-          Text('^>^'),
-          Text('^.^')
-        ]
-      ),
+      body: TabBarView(controller: _tabController, children: [
+        // Put things here
+
+        Center(
+          child: Text('Home'),
+        ),
+        Portfolio(),
+      ]),
     );
   }
 }
