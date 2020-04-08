@@ -9,7 +9,8 @@ class Home extends StatelessWidget {
 
   Home(){
     SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      this.id = prefs.getString(id);
+      // For right now, this will be null.
+      this.id = prefs.getString('id');
     });
   }
 

@@ -41,9 +41,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       body: TabBarView(controller: _tabController, children: [
         // Put things here
 
-        Center(
-          child: Text('Home'),
-        ),
+        Home(),
         Portfolio(),
       ]),
     );
