@@ -16,12 +16,25 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15)
-        )
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15)
+          ),
+          color: Colors.black38,
+       ),
+        child: ListTile(
+         title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Current Portfolio Value')
+            ],
+          ),
+        ),
+      )
     );
   }
 }
