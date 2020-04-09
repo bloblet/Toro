@@ -16,7 +16,7 @@ class HomeCard extends StatelessWidget {
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[Text('Current Portfolio Value')],
+              children: <Widget>[Center(child: Text('Current Portfolio Value'))],
             ),
           ),
         ),
