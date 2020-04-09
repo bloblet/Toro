@@ -46,18 +46,25 @@ class Home extends StatelessWidget {
         FutureBuilder(
           future: http.get('http://bloblet.com:4000/portfolio?id=${1}'),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting) {
-
+            if(snapshot.hasData) {
+              return  Column(
+                children: <Widget>[
+                  HomeCard(),
+                  HomeCard(),
+                  HomeCard(),
+                ],
+              );
             }
+            else if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return Container(
+              height: MediaQuery.of(context).size.width/4, 
+              width: MediaQuery.of(context).size.width/4, 
+              child: CircularProgressIndicator());
           }
         ),
-        Column(
-          children: <Widget>[
-            HomeCard(),
-            HomeCard(),
-            HomeCard(),
-          ],
-        ),
+       
       ],)
     );
   }
