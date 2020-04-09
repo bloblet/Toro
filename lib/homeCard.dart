@@ -22,7 +22,10 @@ class HomeCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               //children: <Widget>[Center(child: Text('Current Portfolio Value'))],
-              children: <Widget>[Text('Top 3 stocks...')],
+              children: <Widget>[
+                Text(this.stock.symbol),
+                Text(this.stock.name, style: TextStyle(fontSize: 11),)
+              ],
             ),
           ),
         ),
