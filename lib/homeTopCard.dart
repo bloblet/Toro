@@ -13,7 +13,7 @@ class HomeTopCard extends StatelessWidget {
         decoration: ShapeDecoration(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          color: Colors.black12,
+          color: Colors.blueGrey[100],
         ),
         child: Container(
           height: MediaQuery.of(context).size.height / 8 - 8,
