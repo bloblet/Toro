@@ -10,7 +10,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'PyMarkets',
         theme: ThemeData(
-          textTheme: ,
           primaryColor: Colors.blue,
           scaffoldBackgroundColor: Colors.white,
         ),
