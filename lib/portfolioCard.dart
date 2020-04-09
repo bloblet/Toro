@@ -18,7 +18,7 @@ class PortfolioCard extends StatelessWidget {
             color: Colors.grey[300],
           ),
           child: ListTile(
-
+              
             title: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
