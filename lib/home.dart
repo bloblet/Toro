@@ -43,9 +43,21 @@ class Home extends StatelessWidget {
             Center(child: Text('\$349,509 (2.54%)', style: TextStyle(fontSize: 15)))            
           ]),
         ],),
-        HomeCard(),
-        HomeCard(),
-        HomeCard(),
+        FutureBuilder(
+          future: http.get('http://bloblet.com:4000/portfolio?id=${1}'),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) {
+
+            }
+          }
+        ),
+        Column(
+          children: <Widget>[
+            HomeCard(),
+            HomeCard(),
+            HomeCard(),
+          ],
+        ),
       ],)
     );
   }
