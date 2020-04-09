@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class HomeCard extends StatelessWidget {
+class HomeTopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -12,11 +12,12 @@ class HomeCard extends StatelessWidget {
         ),
         child: Container(
           height: MediaQuery.of(context).size.height / 6,
+          width: MediaQuery.of(context).size.width/2 - 16,
           child: ListTile(
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[Text('Top 3 stocks...')],
+              children: <Widget>[Text('Something...')],
             ),
           ),
         ),
