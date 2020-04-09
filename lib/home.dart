@@ -22,18 +22,25 @@ class Home extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child:
         Column(children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Center(child: Text('Dashboard',style: TextStyle(fontSize: 35),),),
+        ),
+        Divider(thickness: 2,),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
 
           HomeTopCard([
-            Center(child: Text('\$1,000,000 cash')),
+            Center(child: Text('\$10,000,000', style: TextStyle(fontSize: 15),)),
             Divider(color: Colors.black38,),
-            Center(child: Text('\$10,000,000 total')),
+            Center(child: Text('Available to Trade', style: TextStyle(fontSize: 13),),),
+            Center(child: Text('\$1,000,000', style: TextStyle(fontSize: 15),))
           ]),
           HomeTopCard([
-            Center(child: Text('Days Change')),
-            
+            Center(child: Text('Day Change')),
+            Divider(color: Colors.black38,),
+            Center(child: Text('\$349,509 (2.54%)', style: TextStyle(fontSize: 15)))            
           ]),
         ],),
         HomeCard(),
