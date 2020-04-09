@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'models/stock.dart';
 
 class HomeCard extends StatelessWidget {
+  final Stock stock;
+
+  HomeCard(this.stock);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
