@@ -28,7 +28,7 @@ class Home extends StatelessWidget {
 
           HomeTopCard([
             Center(child: Text('\$1,000,000 cash')),
-            Divider(),
+            Divider(color: Colors.black38,),
             Center(child: Text('\$10,000,000 total')),
           ]),
           HomeTopCard([
