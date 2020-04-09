@@ -37,7 +37,7 @@ class Portfolio extends StatelessWidget {
           stocks.forEach((key, value) {
             data.add(Stock(value));
           });
-
+          
           data.sort((Stock a, Stock b) => a.symbol.compareTo(b.symbol));
           List<Widget> column = [];
           data.forEach((Stock value) {});
