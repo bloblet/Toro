@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockSimulator/portfolioCard.dart';
 import 'package:http/http.dart' as http;
 import 'homeCard.dart';
+import 'homeTopCard.dart';
 import 'models/stock.dart';
 
 class Home extends StatelessWidget {
@@ -20,6 +21,10 @@ class Home extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Column(children: <Widget>[
+        Row(children: <Widget>[
+          HomeTopCard(),
+          HomeTopCard(),
+        ],),
         HomeCard(),
         HomeCard(),
         HomeCard(),
