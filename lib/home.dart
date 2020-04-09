@@ -23,7 +23,6 @@ class Home extends StatelessWidget {
       child: Column(children: <Widget>[
         Row(children: <Widget>[
           HomeTopCard(),
-          HomeTopCard(),
         ],),
         HomeCard(),
         HomeCard(),
