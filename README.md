@@ -1,4 +1,4 @@
-# stockSimulator
+# StockSimulator
 
 A new Flutter project.
 
