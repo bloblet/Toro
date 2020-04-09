@@ -19,10 +19,21 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      padding: const EdgeInsets.all(4),
       child: Column(children: <Widget>[
-        Row(children: <Widget>[
-          HomeTopCard(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+
+          HomeTopCard([
+            Center(child: Text('\$1,000,000 cash')),
+            Divider(),
+            Center(child: Text('\$10,000,000 total')),
+          ]),
+          HomeTopCard([
+            Center(child: Text('Days Change')),
+            
+          ]),
         ],),
         HomeCard(),
         HomeCard(),
