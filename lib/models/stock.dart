@@ -22,10 +22,11 @@ class Stock {
   double yearHigh;
   double yearLow;
   int quantity;
+  DateTime fetched;
 
   Stock(Map info) {
     this.avgVolume = info['avgVolume'];
-    this.change = info['change'];
+    this.change = double.parse(info['change'].toString());
     this.changesPercentage = info['changesPercentage'];
     this.dayHigh = info['dayHigh'];
     this.dayLow = info['dayLow'];
@@ -48,6 +49,9 @@ class Stock {
     this.yearLow = info['yearLow'];
     if (info.containsKey('quantity')) {
       this.quantity = info['quantity'];
+    }
+    if (info.containsKey('lastFetched')) {
+      this.fetched = info['lastFetched'];
     }
   }
 }
