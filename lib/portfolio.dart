@@ -67,7 +67,7 @@ class PortfolioStock extends StatelessWidget {
                   child: AlertDialog(
                     shape: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16.0)),
-                    title: Text('${this.stock.symbol} Advanced'),
+                    title: Text('Advanced info'),
                     content: Container(
                       height: MediaQuery.of(context).size.height / 3,
                       child: Column(
@@ -81,8 +81,6 @@ class PortfolioStock extends StatelessWidget {
                           Text('Day low: ${stock.dayLow}'),
                           Text('52-Week High: ${stock.yearHigh}'),
                           Text('52-Week Low: ${stock.yearLow}')
-                          
-
                         ],
                       ),
                     ),
