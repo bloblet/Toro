@@ -72,9 +72,16 @@ class PortfolioStock extends StatelessWidget {
                       height: MediaQuery.of(context).size.height / 3,
                       child: Column(
                         children: <Widget>[
+                          Text('Price: ${stock.price}'),
+                          Text('Change: ${stock.change}'),
+                          Text('Today\'s Gain/Loss: ${stock.change * stock.quantity}'),
+                          Text('Open: ${stock.openValue}'),
+                          Text('Previous Close: ${stock.previousClose}'),
                           Text('Day high: ${stock.dayHigh}'),
                           Text('Day low: ${stock.dayLow}'),
-                          Text('Change: ${stock.change}'),
+                          Text('52-Week High: ${stock.yearHigh}'),
+                          Text('52-Week Low: ${stock.yearLow}')
+                          
 
                         ],
                       ),
