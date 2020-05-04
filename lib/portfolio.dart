@@ -74,7 +74,7 @@ class PortfolioStock extends StatelessWidget {
                         children: <Widget>[
                           Text('Price: ${stock.price}'),
                           Text('Change: ${stock.change}'),
-                          Text('Today\'s Gain/Loss: ${stock.change * stock.quantity}'),
+                          //Text('Today\'s Gain/Loss: ${stock.change * stock.quantity}'), I guess you can't do multiplication that way
                           Text('Open: ${stock.openValue}'),
                           Text('Previous Close: ${stock.previousClose}'),
                           Text('Day high: ${stock.dayHigh}'),
