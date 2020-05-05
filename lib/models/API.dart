@@ -20,6 +20,11 @@ class API {
     return Stock(jsonDecode((await http.get('http://bloblet.com')).body));
   }
 
+  Future<void> _saveData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  }
+
   Future<Stock> getStock(String symbol) async {
     if (_stockCache.containsKey(symbol) &&
         DateTime.now()

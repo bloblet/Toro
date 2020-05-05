@@ -24,6 +24,9 @@ dependencies:
   shared_preferences: ^0.5.6+3
   font_awesome_flutter: ^8.8.1
   recaptchav2_plugin: ^1.0.0
+  fl_chart: ^0.9.4
+  pie_chart: ^3.1.1
+  random_color: ^1.0.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -59,7 +62,7 @@ flutter:
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
+  # "family" key with the font family name, and a "fonts" key awith a
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
@@ -68,7 +71,7 @@ flutter:
         - asset: assets/fonts/Raleway-Regular.ttf
         - asset: assets/fonts/Raleway-Bold.ttf
           weight: 700
-        
+
 
   #
   # For details regarding fonts from package dependencies,

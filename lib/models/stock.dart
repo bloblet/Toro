@@ -1,3 +1,11 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:random_color/random_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'serializer.dart';
+
 class Stock {
   int avgVolume;
   double change;
@@ -23,6 +31,7 @@ class Stock {
   double yearLow;
   int quantity;
   DateTime fetched;
+  Color color;
 
   Stock(Map info) {
     this.avgVolume = info['avgVolume'];
@@ -53,5 +62,18 @@ class Stock {
     if (info.containsKey('lastFetched')) {
       this.fetched = info['lastFetched'];
     }
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      var raw = prefs.getString('stocks');
+      if (raw == null) {
+        raw = '{}';
+      }
+      var stocks = jsonDecode(raw);
+      if (stocks.containsKey(this.symbol)) {
+        this.color = Serializer().unserializeColor(stocks[this.symbol]);
+      } else {
+        this.color = RandomColor().randomMaterialColor();
+        stocks[this.symbol] = Serializer().serializeColor(this.color);
+      }
+    });
   }
 }
