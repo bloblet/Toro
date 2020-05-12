@@ -3,14 +3,7 @@ import 'package:stockSimulator/widgets/portfoliov2.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int pos = 0;
+class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
