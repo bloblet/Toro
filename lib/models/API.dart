@@ -29,12 +29,12 @@ class API {
   /// Arguably, this is more important than stocks or our portfolio, and could change faster.
   /// Renews every 1 minute.
   ///
-  static const Duration _balanceCacheRenewTime = Duration(minutes: 15);
+  static const Duration _balanceCacheRenewTime = Duration(minutes: 1);
   static double _balanceCache;
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://bloblet.com/';
+  static const String _apiEndpoint = 'http://bloblet.com:4000/';
 
   // UserID to get stocks for.
   // DUMMY
@@ -85,7 +85,7 @@ class API {
     //     'token': _token,
     //   }),
     // );
-    final response = await http.get('${_apiEndpoint}dummy/portfolio');
+    final response = await http.get('http://bloblet.com:4000/dummy/portfolio');
     _checkResponse(response);
 
     _lastFetchedPortfolio = DateTime.now();
@@ -111,7 +111,7 @@ class API {
     //     'token': _token,
     //   }),
     // );
-    final response = await http.get('${_apiEndpoint}dummy/balance');
+    final response = await http.get('http://bloblet.com:4000/dummy/balance');
     _checkResponse(response);
     return double.parse(response.body);
   }

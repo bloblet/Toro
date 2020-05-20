@@ -1,3 +1,4 @@
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:stockSimulator/widgets/portfoliov2.dart';
 
@@ -7,13 +8,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PyMarkets',
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+    return FeatureDiscovery(
+      child: MaterialApp(
+        title: 'PyMarkets',
+        theme: ThemeData(
+          primaryColor: Colors.blue,
+          scaffoldBackgroundColor: Colors.white,
+        ),
+        home: PortfolioV2()
       ),
-      home: PortfolioV2()
     );
   }
 }
