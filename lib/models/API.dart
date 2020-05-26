@@ -5,7 +5,7 @@ import './stock.dart';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
-/// `// DUMMY`, and it will be a fully working API,as long as the counterpart is...
+/// `// DUMMY`, and it will be a fully working API, as long as the counterpart is...
 class API {
   /// Cache of the API.  I don't want to worry about passing this around in the
   /// widget tree, so this will stay.
@@ -36,13 +36,9 @@ class API {
   /// Current location of the stocks API
   static const String _apiEndpoint = 'http://bloblet.com:4000/';
 
-  // UserID to get stocks for.
-  // DUMMY
-  // static int userID;
-
   // Token to authenticate [userID] for.
-  // DUMMY
-  // static String token;
+  static String _token =
+      "d4a9b230b27c546151904760dbb1ce15db0bbf33eeff6fe3dbf0f8115f4334bbbad7dd23a6c4800eacc3099ca5875a8899c778539a21f7286e63509c65f62200";
 
   /// Default factory constructor for the singleton class
   factory API() {
@@ -78,19 +74,23 @@ class API {
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
   Future<List<Stock>> _fetchPortfolio() async {
     final List<Stock> stocks = [];
-    // DUMMY
-    // final response = await http.post('${_apiEndpoint}portfolio', body:
-    //   jsonEncode({
-    //     'userID': _userID,
-    //     'token': _token,
-    //   }),
-    // );
-    final response = await http.get('http://bloblet.com:4000/dummy/portfolio');
+    final response = await http.post(
+      '${_apiEndpoint}portfolio',
+      body: jsonEncode({
+        'token': _token,
+      }),
+    );
     _checkResponse(response);
 
     _lastFetchedPortfolio = DateTime.now();
 
-    final List<dynamic> body = jsonDecode(response.body);
+    final List body = jsonDecode(response.body);
+    if (body.length == 0){
+      return [];
+    } else if (body.length == 1) {
+      return [Stock(body[0])];
+    }
+
     body.sort((stock1, stock2) => stock1['symbol'].compareTo(stock2['symbol']));
 
     for (Map<String, Object> stock in body) {
@@ -103,26 +103,30 @@ class API {
 
   /// Fetches the user's latest balance from the server.
   Future<double> _fetchBalance() async {
-    // DUMMY
-    // final response = await http.post(
-    //   '${_apiEndpoint}balance',
-    //   body: jsonEncode({
-    //     'userID': _userID,
-    //     'token': _token,
-    //   }),
-    // );
-    final response = await http.get('http://bloblet.com:4000/dummy/balance');
+    final response = await http.post(
+      '${_apiEndpoint}balance',
+      body: jsonEncode({
+        'token': _token,
+      }),
+    );
     _checkResponse(response);
     return double.parse(response.body);
   }
 
+  /// Buys a stock.
+  ///
+  /// [symbol] - Target stock's symbol.
+  ///
+  /// Returns a Stock
+  ///
+  /// Throws APIError if
   /// Gets a stock by its symbol.
   ///
   /// [symbol] - String Symbol of the stock to fetch.
   ///
   /// Returns a Stock.
   ///
-  /// Throws APIError if the [userID] is not registered, the [token] not valid for the [userID],
+  /// Throws APIError if the [token] is not valid,
   /// or the symbol is invalid.
   Future<Stock> getStock(String symbol) async {
     if (!_stockCache.containsKey(symbol) ||
@@ -156,7 +160,8 @@ class API {
   /// Throws APIError if the [userID] is not registered, the [token] not valid for the [userID],
   /// or the symbol is invalid.
   Future<double> getBalance() async {
-    if (_balanceCache == null || _shouldFetch(_lastFetchedBalance, duration: _balanceCacheRenewTime)) {
+    if (_balanceCache == null ||
+        _shouldFetch(_lastFetchedBalance, duration: _balanceCacheRenewTime)) {
       return await _fetchBalance();
     } else {
       return _balanceCache;

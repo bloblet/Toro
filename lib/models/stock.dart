@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,9 +30,10 @@ class Stock {
   double yearLow;
   int quantity;
   DateTime fetched;
-  Color color;
+  Map<String, dynamic> raw;
 
   Stock(Map info) {
+    this.raw = info;
     this.avgVolume = info['avgVolume'];
     this.change = double.parse(info['change'].toString());
     this.changesPercentage = info['changesPercentage'];
@@ -66,13 +66,6 @@ class Stock {
       var raw = prefs.getString('stocks');
       if (raw == null) {
         raw = '{}';
-      }
-      var stocks = jsonDecode(raw);
-      if (stocks.containsKey(this.symbol)) {
-        this.color = Serializer().unserializeColor(stocks[this.symbol]);
-      } else {
-        this.color = RandomColor().randomMaterialColor();
-        stocks[this.symbol] = Serializer().serializeColor(this.color);
       }
     });
   }
