@@ -197,7 +197,7 @@ class API {
     await _fetchPortfolio();
   }
 
-  Future<List<Map<String, dynamic>>> search(String term) async {
+  Future<List> search(String term) async {
     final response = await http.post('${_apiEndpoint}search',
     body: jsonEncode({
       'token': _token,
