@@ -2,56 +2,135 @@ import 'package:flutter/material.dart';
 import 'package:stockSimulator/models/API.dart';
 import 'package:stockSimulator/models/stock.dart';
 import 'package:stockSimulator/widgets/tabScaffold.dart';
-import 'package:adv_fab/adv_fab.dart';
 
-class Market extends StatelessWidget {
+import 'dart:async';
+
+final routeObserver = RouteObserver<PageRoute>();
+final duration = const Duration(milliseconds: 300);
+
+class Market extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final route = ModalRoute.of(context).settings.arguments;
+  _MarketState createState() => _MarketState();
+}
 
-    // return TabScaffold(
-    //   body: StreamBuilder(
-    //     stream: API().balanceStream.stream.asBroadcastStream(),
-    //     builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-    //       if (snapshot.hasData) {
-    final size = MediaQuery.of(context).size;
+class _MarketState extends State<Market> with RouteAware {
 
-    return TabScaffold(
-      appBar: AppBar(),
-      body: ListView(
-        children: <Widget>[
-          MarketReccomendedStocks(),
-          SizedBox(height: 16),
-          MarketGainLoss(),
+  GlobalKey _fabKey = GlobalKey();
+  bool _fabVisible = true;
 
+  @override
+  didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
 
-        ],
-      ),
+  @override
+  dispose() {
+    super.dispose();
+    routeObserver.unsubscribe(this);
+  }
+
+  @override
+  didPopNext() {
+    // Show back the FAB on transition back ended
+    Timer(duration, () {
+      setState(() => _fabVisible = true);
+    });
+  }
+   Widget _buildTransition(
+    Widget page,
+    Animation<double> animation,
+    Size fabSize,
+    Offset fabOffset,
+  ) {
+    if (animation.value == 1) return page;
+
+    final borderTween = BorderRadiusTween(
+      begin: BorderRadius.circular(fabSize.width / 2),
+      end: BorderRadius.circular(0.0),
+    );
+    final sizeTween = SizeTween(
+      begin: fabSize,
+      end: MediaQuery.of(context).size,
+    );
+    final offsetTween = Tween<Offset>(
+      begin: fabOffset,
+      end: Offset.zero,
     );
 
-    //       } else {
-    //         return MarketAppBar(
-    //           amount: 0,
-    //         );
-    //       }
-    //     },
-    //   ),
-    //   appBar: PreferredSize(
-    //     preferredSize: AppBar().preferredSize,
-    //     child: StreamBuilder(
-    //       stream: API().balanceStream.stream,
-    //       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-    //         if (snapshot.hasData) {
-    //           return MarketAppBar(amount: snapshot.data);
-    //         } else {
-    //           return MarketAppBar(
-    //             amount: 0,
-    //           );
-    //         }
-    //       },
-    //     ),
-    //   ),
-    // );
+    final easeInAnimation = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeIn,
+    );
+    final easeAnimation = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOut,
+    );
+
+    final radius = borderTween.evaluate(easeInAnimation);
+    final offset = offsetTween.evaluate(animation);
+    final size = sizeTween.evaluate(easeInAnimation);
+
+    final transitionFab = Opacity(
+      opacity: 1 - easeAnimation.value,
+      child: _buildFAB(context),
+    );
+
+    Widget positionedClippedChild(Widget child) => Positioned(
+        width: size.width,
+        height: size.height,
+        left: offset.dx,
+        top: offset.dy,
+        child: ClipRRect(
+          borderRadius: radius,
+          child: child,
+        ));
+
+    return Stack(
+      children: [
+        positionedClippedChild(page),
+        positionedClippedChild(transitionFab),
+      ],
+    );
+  }
+
+  _onFabTap(BuildContext context) {
+
+    // Hide the FAB on transition start
+    setState(() => _fabVisible = false);
+
+    final RenderBox fabRenderBox = _fabKey.currentContext.findRenderObject();
+    final fabSize = fabRenderBox.size;
+    final fabOffset = fabRenderBox.localToGlobal(Offset.zero);
+
+    Navigator.of(context).push(PageRouteBuilder(
+      transitionDuration: duration,
+      pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) =>
+          SearchPage(),
+      transitionsBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) =>
+          _buildTransition(child, animation, fabSize, fabOffset),
+    ));
+  }
+
+  Widget _buildFAB(context, {key}) => FloatingActionButton(
+        key: key,
+        onPressed: () => _onFabTap(context),
+        backgroundColor: Color.fromRGBO(76, 175, 80, 1),
+        child: Icon(Icons.search),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return TabScaffold(
+      body: Container(),
+      appBar: AppBar(),
+      fab: Visibility(
+        visible: _fabVisible,
+        child: _buildFAB(context, key: _fabKey),
+      ),
+    );
   }
 }
 
@@ -119,35 +198,6 @@ class MarketGainLoss extends StatelessWidget {
     );
   }
 }
-class MarketReccomendedStocks extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-
-        ],
-      ),
-    );
-  }
-}
-
-class MarketAppBar extends StatelessWidget {
-  final double amount;
-
-  MarketAppBar({@required this.amount});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-        title: Text('\$${amount.toStringAsFixed(2)}'),
-        actions: [IconButton(icon: Icon(Icons.settings), onPressed: () {})]);
-  }
-}
-
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -165,6 +215,7 @@ class _SearchPageState extends State<SearchPage> {
           decoration: InputDecoration.collapsed(hintText: "Search"),
           onChanged: (value) async {
             terms = await API().search(value);
+            print(terms);
             setState((){});
           },
           controller: searchController,

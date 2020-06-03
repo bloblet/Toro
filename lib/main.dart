@@ -11,11 +11,13 @@ class MyApp extends StatelessWidget {
     // return FeatureDiscovery(
     //   child:
     return MaterialApp(
-        title: 'PyMarkets',
-        theme: ThemeData(
-          primaryColor: Colors.green,
-          scaffoldBackgroundColor: Colors.white,
-        ),
-        home: Market());
+      navigatorObservers: [routeObserver],
+      title: 'PyMarkets',
+      theme: ThemeData(
+        primaryColor: Colors.green,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: Market(),
+    );
   }
 }
