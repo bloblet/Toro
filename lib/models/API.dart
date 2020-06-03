@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -34,11 +35,11 @@ class API {
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://bloblet.com:4000/';
+  static const String _apiEndpoint = 'http://pn.bloblet.com:2000/';
 
   // Token to authenticate [userID] for.
   static String _token =
-      "d4a9b230b27c546151904760dbb1ce15db0bbf33eeff6fe3dbf0f8115f4334bbbad7dd23a6c4800eacc3099ca5875a8899c778539a21f7286e63509c65f62200";
+      "64eaacc1aa2b09d1f7e727135c1c3f966355308a70c96526b5c0d9114f5b8caa6397a32845e8fde1e517dff2c8a120cba85d2133b5f2eae9ee71fb2fe28f1db7";
 
   /// Default factory constructor for the singleton class
   factory API() {
@@ -166,6 +167,47 @@ class API {
     } else {
       return _balanceCache;
     }
+  }
+
+  Future buyStock(String symbol, int quantity) async {
+    final response = await http.post('${_apiEndpoint}buyStock',
+      body: jsonEncode({
+        'token': _token,
+        'symbol': symbol,
+        'quantity': quantity
+      })
+    );
+
+    _checkResponse(response);
+    await _fetchBalance();
+    await _fetchPortfolio();
+  }
+
+  Future sellStock(String symbol, int quantity) async {
+    final response = await http.post('${_apiEndpoint}sellStock',
+      body: jsonEncode({
+        'token': _token,
+        'symbol': symbol,
+        'quantity': quantity
+      })
+    );
+
+    _checkResponse(response);
+    await _fetchBalance();
+    await _fetchPortfolio();
+  }
+
+  Future<List<Map<String, dynamic>>> search(String term) async {
+    final response = await http.post('${_apiEndpoint}search',
+    body: jsonEncode({
+      'token': _token,
+      'term': term
+    }));
+
+    _checkResponse(response);
+    final body = jsonDecode(response.body);
+
+    return body;
   }
 }
 
