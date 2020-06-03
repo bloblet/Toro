@@ -197,6 +197,26 @@ class API {
     await _fetchPortfolio();
   }
 
+  Future<List> topGain() async {
+    final response = await http.post('${_apiEndpoint}topGain',
+      body: jsonEncode({
+        'token': _token
+      })
+    );
+    _checkResponse(response);
+    return jsonDecode(response.body);
+  }
+
+  Future<List> trending() async {
+    final response = await http.post('${_apiEndpoint}trending',
+      body: jsonEncode({
+        'token': _token
+      })
+    );
+    _checkResponse(response);
+    return jsonDecode(response.body);
+  }
+
   Future<List> search(String term) async {
     final response = await http.post('${_apiEndpoint}search',
     body: jsonEncode({
