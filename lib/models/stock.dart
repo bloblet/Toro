@@ -35,7 +35,7 @@ class Stock {
   Stock(Map info) {
     this.raw = info;
     this.avgVolume = info['avgVolume'];
-    this.change = double.parse(info['change'].toString());
+    this.change = double.tryParse(info['change'].toString());
     this.changesPercentage = info['changesPercentage'];
     this.dayHigh = info['dayHigh'];
     this.dayLow = info['dayLow'];
