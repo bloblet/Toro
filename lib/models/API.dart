@@ -35,7 +35,7 @@ class API {
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://pn.bloblet.com:2000/';
+  static const String _apiEndpoint = 'http://bloblet.com:4000/';
 
   // Token to authenticate [userID] for.
   static String _token =
