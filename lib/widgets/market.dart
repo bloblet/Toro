@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:stockSimulator/models/portfolio.dart';
+import 'package:stockSimulator/models/topGain.dart';
 import '../bloc/API.dart';
 import 'package:stockSimulator/models/stock.dart';
 import 'package:stockSimulator/widgets/tabScaffold.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 final routeObserver = RouteObserver<PageRoute>();
@@ -124,7 +127,8 @@ class _MarketState extends State<Market> with RouteAware {
     final theme = Theme.of(context);
 
     return TabScaffold(
-      body: (context) => FutureBuilder(
+      body: (context) => FutureProvider<TopGainEvent>(
+        create: ,
           future: API().topGain(),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             switch (snapshot.connectionState) {
@@ -195,15 +199,8 @@ class _MarketState extends State<Market> with RouteAware {
           }),
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize,
-        child: StreamBuilder(
-          stream: API().getBalance().asStream(),
-          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-            if (snapshot.hasData) {
-              return AppBar(title: Text('\$${snapshot.data.toStringAsFixed(2)}'));
-            } else {
-              return AppBar(title: Text('\$0'));
-            }
-          },
+        child: FutureProvider<PortfolioEvent>(
+          create: (context) => PortfolioEvent.getPortfolio(),
         ),
       ),
       fab: Visibility(
