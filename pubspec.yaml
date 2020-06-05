@@ -76,7 +76,10 @@ flutter:
         - asset: assets/fonts/Raleway-Regular.ttf
         - asset: assets/fonts/Raleway-Bold.ttf
           weight: 700
-
+          
+    - family:  StockSimIcons
+      fonts:
+        - asset: assets/fonts/StockSimIcons.ttf
 
   #
   # For details regarding fonts from package dependencies,

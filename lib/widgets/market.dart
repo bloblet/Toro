@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stockSimulator/models/API.dart';
+import '../bloc/API.dart';
 import 'package:stockSimulator/models/stock.dart';
 import 'package:stockSimulator/widgets/tabScaffold.dart';
-
 import 'dart:async';
 
 final routeObserver = RouteObserver<PageRoute>();
@@ -122,9 +121,91 @@ class _MarketState extends State<Market> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TabScaffold(
-      body: Container(),
-      appBar: AppBar(),
+      body: (context) => FutureBuilder(
+          future: API().topGain(),
+          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                final List<Widget> children = [
+                  SizedBox(height: 8),
+                  Text("Today's top gainers", style: theme.textTheme.headline5),
+                  SizedBox(height: 8),
+                  Divider(height: 3, color: Colors.grey[600], endIndent: 10),
+                  SizedBox(height: 16),
+                  // Container(
+                  //   decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+
+                  //   child: Image.network(
+                  //     'https://unsplash.com/photos/uJhgEXPqSPk/download?force=true&w=1920',
+                  //   ),
+                  // ),
+                ];
+                for (Stock stock in snapshot.data) {
+                  children.add(ListTile(
+                      leading: Text(stock.symbol),
+                      title: Text('\$${stock.price.toStringAsFixed(2)}'),
+                      subtitle: Text(
+                          '${(stock.change.isNegative) ? '-' : '+'}\$${stock.change.abs().toStringAsFixed(2)} today'),
+                      trailing: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.assessment),
+                            onPressed: () {}
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.attach_money),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                      dense: true));
+                  if (snapshot.data.indexOf(stock) !=
+                      snapshot.data.length - 1) {
+                    children.add(Divider(height: 2, color: Colors.grey));
+                  }
+                }
+
+                return ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: children,
+                              mainAxisSize: MainAxisSize.min,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                break;
+              default:
+                return LinearProgressIndicator();
+            }
+          }),
+      appBar: PreferredSize(
+        preferredSize: AppBar().preferredSize,
+        child: StreamBuilder(
+          stream: API().getBalance().asStream(),
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+            if (snapshot.hasData) {
+              return AppBar(title: Text('\$${snapshot.data.toStringAsFixed(2)}'));
+            } else {
+              return AppBar(title: Text('\$0'));
+            }
+          },
+        ),
+      ),
       fab: Visibility(
         visible: _fabVisible,
         child: _buildFAB(context, key: _fabKey),
@@ -219,7 +300,6 @@ class _SearchPageState extends State<SearchPage> {
           controller: searchController,
         ),
       ),
-
       body: ListView.builder(
         itemCount: terms.length,
         itemBuilder: (context, index) {
@@ -228,11 +308,11 @@ class _SearchPageState extends State<SearchPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                
                 title: Text(stock['name']),
                 subtitle: Text(stock['symbol']),
                 trailing: Text(stock['price'].toString()),
               ),
+              Divider(height: 2, color: Colors.grey)
             ],
           );
         },

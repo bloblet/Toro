@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import './stock.dart';
+import '../models/stock.dart';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -197,14 +197,19 @@ class API {
     await _fetchPortfolio();
   }
 
-  Future<List> topGain() async {
+  Future<List<Stock>> topGain() async {
     final response = await http.post('${_apiEndpoint}topGain',
       body: jsonEncode({
         'token': _token
       })
     );
     _checkResponse(response);
-    return jsonDecode(response.body);
+    List<Stock> stocks = [];
+    List body = jsonDecode(response.body);
+    for (var stock in body) {
+      stocks.add(Stock(stock));
+    }
+    return stocks;
   }
 
   Future<List> trending() async {
@@ -228,6 +233,33 @@ class API {
     final body = jsonDecode(response.body);
 
     return body;
+  }
+
+  Future<double> totalBalance() async {
+    double balance = await getBalance();
+    final portfolio = await getPortfolio();
+    portfolio.forEach((element) => balance += element.price * element.quantity);
+
+    return balance;
+  }
+
+  Future<double> totalChange() async {
+    double change = 0;
+    final portfolio = await getPortfolio();
+    portfolio.forEach((element) => change += element.change * element.quantity);
+
+    return change;
+  }
+
+  Future<double> changePercent() async {
+    final totalBalance = await this.totalBalance();
+    final portfolio = await getPortfolio();
+    double open = 0;
+    portfolio.forEach((element) => open += element.openValue * element.quantity);
+    if (open == 0) {
+      return 0;
+    }
+    return totalBalance/open;
   }
 }
 

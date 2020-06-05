@@ -4,68 +4,112 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../models/API.dart';
+import 'package:provider/provider.dart';
+import 'package:stockSimulator/widgets/stock.dart';
+import '../bloc/API.dart';
 import '../models/stock.dart';
 import 'tabScaffold.dart';
+import 'stock.dart';
+import 'zoomScaffold.dart';
 
 class PortfolioV2 extends StatelessWidget with ChangeNotifier {
   final ValueNotifier<AppBarButtons> sortMethod =
       ValueNotifier<AppBarButtons>(AppBarButtons.sortByAlpha);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext _) {
     return TabScaffold(
-      body: StreamBuilder(
-        stream: API().getPortfolio().asStream(),
-        builder: (BuildContext context, AsyncSnapshot<List<Stock>> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.active:
-              if (snapshot.hasData) {
-                return PortfolioBody(
-                    data: snapshot.data, listenable: sortMethod);
-              }
-              return LinearProgressIndicator();
-
-            case ConnectionState.done:
-              if (snapshot.hasData) {
-                return PortfolioBody(
-                    data: snapshot.data, listenable: sortMethod);
-              }
-              return Center(
-                  child: Text('No stocks yet!',
-                      style: TextStyle(fontSize: 25, color: Colors.black45)));
-            default:
-              return LinearProgressIndicator();
-          }
-        },
-      ),
-      appBar: PreferredSize(
-        preferredSize: AppBar().preferredSize,
-        child: StreamBuilder(
-          stream: API().getBalance().asStream(),
-          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-            if (snapshot.hasData) {
-              return PortfolioAppBar(
-                amount: snapshot.data,
-                sortBy: (AppBarButtons sortMethod) {
-                  this.sortMethod.value = sortMethod;
-                  this.sortMethod.notifyListeners();
-                },
-              );
-            } else {
-              return PortfolioAppBar(
-                amount: 0,
-                sortBy: (_) {},
-              );
-            }
-          },
+      body: (context) => MultiProvider(
+        providers: [
+          FutureProvider(
+            create: (context) => API().getBalance(),
+          ),
+          FutureProvider(
+            create: (context) => API().getBalance(),
+          ),
+        ],
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+            elevation: 0.0,
+            leading: IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  Provider.of<MenuController>(context, listen: false).toggle();
+                }),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                Card(child: Container(color: Colors.red, height: 100,),),
+                Card(child: Container(color: Colors.orange, height: 100,),),
+                Card(child: Container(color: Colors.amber, height: 100,),),
+                Card(child: Container(color: Colors.yellow, height: 100,),),
+                Card(child: Container(color: Colors.lightGreen, height: 100,),),
+                Card(child: Container(color: Colors.green, height: 100,),),
+                Card(child: Container(color: Colors.blue, height: 100,),),
+                Card(child: Container(color: Colors.indigo, height: 100,),),
+                Card(child: Container(color: Colors.purple, height: 100,),),
+                Card(child: Container(color: Colors.deepPurple, height: 100,),),
+              ]),
+            )
+          ],
         ),
       ),
     );
+
+    // return TabScaffold(
+    //   body: StreamBuilder(
+    //     stream: API().getPortfolio().asStream(),
+    //     builder: (BuildContext context, AsyncSnapshot<List<Stock>> snapshot) {
+    //       switch (snapshot.connectionState) {
+    //         case ConnectionState.active:
+    //           if (snapshot.hasData) {
+    //             return PortfolioBody(
+    //                 data: snapshot.data, listenable: sortMethod);
+    //           }
+    //           return LinearProgressIndicator();
+
+    //         case ConnectionState.done:
+    //           if (snapshot.hasData) {
+    //             return PortfolioBody(
+    //                 data: snapshot.data, listenable: sortMethod);
+    //           }
+    //           return Center(
+    //               child: Text('No stocks yet!',
+    //                   style: TextStyle(fontSize: 25, color: Colors.black45)));
+    //         default:
+    //           return LinearProgressIndicator();
+    //       }
+    //     },
+    //   ),
+    //   appBar: PreferredSize(
+    //     preferredSize: AppBar().preferredSize,
+    //     child: FutureProvider(
+    //       create: (context) => API().getBalance(),
+    //       builder: (context, child) => PortfolioAppBar(
+    //             amount: Provider<double>.(create: null)
+    //           ),
+    //     ),
+    //     // child: StreamBuilder(
+    //     //   stream: API().getBalance().asStream(),
+    //     //   builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+    //     //     if (snapshot.hasData) {
+    //     //       return
+    //     //     } else {
+    //     //       return PortfolioAppBar(
+    //     //         amount: 0,
+    //     //         sortBy: (_) {},
+    //     //       );
+    //     //     }
+    //     //   },
+    //     // ),
+    //   ),
+    // );
   }
 }
-
-enum AppBarButtons { sortByAlpha, sortByGains, sortByLoss }
 
 class PortfolioAppBar extends StatefulWidget {
   final double amount;
@@ -163,323 +207,6 @@ class _PortfolioAppBarState extends State<PortfolioAppBar> {
           onPressed: () {},
         ),
       ],
-    );
-  }
-}
-
-class PortfolioBody extends StatelessWidget {
-  final List<Stock> data;
-  final ValueListenable<AppBarButtons> listenable;
-
-  PortfolioBody({@required this.data, @required this.listenable});
-
-  List<Widget> generate(sortMethod) {
-    final List<Widget> widgets = [];
-
-    if (sortMethod == AppBarButtons.sortByAlpha) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          stock1.symbol.compareTo(stock2.symbol));
-    } else if (sortMethod == AppBarButtons.sortByGains) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          (stock1.changesPercentage * -1)
-              .compareTo(stock2.changesPercentage * -1));
-    } else if (sortMethod == AppBarButtons.sortByLoss) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          stock1.changesPercentage.compareTo(stock2.changesPercentage));
-    }
-
-    for (Stock stock in this.data) {
-      widgets.add(PortfolioStockElement(stock: stock));
-    }
-    return widgets;
-  }
-
-  ListView generateColumn(value) {
-    return ListView(
-      children: this.generate(value),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<AppBarButtons>(
-      builder: (BuildContext context, AppBarButtons value, Widget child) {
-        return AnimatedSwitcher(
-          duration: Duration(milliseconds: 200),
-          child: generateColumn(value),
-        );
-      },
-      valueListenable: listenable,
-    );
-  }
-}
-
-class PortfolioStockElement extends StatefulWidget {
-  final Stock stock;
-
-  PortfolioStockElement({@required this.stock});
-
-  @override
-  _PortfolioStockElementState createState() => _PortfolioStockElementState();
-}
-
-class _PortfolioStockElementState extends State<PortfolioStockElement> {
-  @override
-  void initState() {
-    // ...
-    SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-      FeatureDiscovery.discoverFeatures(
-        context,
-        const <String>{'infoButton'},
-      );
-    });
-    super.initState();
-  }
-
-  void sell() {
-    showGeneralDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionBuilder: (context, a1, a2, widget) {
-          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
-            child: Opacity(
-              opacity: a1.value,
-              child: AlertDialog(
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                title: Text(this.widget.stock.name),
-                content: Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Column(
-                    children: <Widget>[
-                      Text('Price: ${this.widget.stock.price}'),
-                      Text('Change: ${this.widget.stock.change}'),
-                      Text(
-                          'Today\'s Gain/Loss: ${(this.widget.stock.change * this.widget.stock.price * this.widget.stock.quantity).toStringAsFixed(2)}'),
-                      Text('Open: ${this.widget.stock.openValue}'),
-                      Text(
-                          'Previous Close: ${this.widget.stock.previousClose}'),
-                      Text('Day high: ${this.widget.stock.dayHigh}'),
-                      Text('Day low: ${this.widget.stock.dayLow}'),
-                      Text('52-Week High: ${this.widget.stock.yearHigh}'),
-                      Text('52-Week Low: ${this.widget.stock.yearLow}')
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-        transitionDuration: Duration(milliseconds: 300),
-        barrierDismissible: true,
-        barrierLabel: '',
-        context: context,
-        pageBuilder: (context, animation1, animation2) {});
-  }
-
-  void popUp(BuildContext context) {
-    const List<String> columnValues = [
-      'price',
-      'quantity',
-      'dayHigh',
-      'dayLow',
-      'change',
-      'changesPercentage',
-      'eps',
-      'exchange',
-      'marketCap',
-      'name',
-      'openValue',
-      'pe',
-      'previousClose',
-      'priceAvg200',
-      'priceAvg50',
-      'yearHigh',
-      'yearLow',
-    ];
-    const List<String> columnNames = [
-      'Price: ',
-      'Quantiy: ',
-      'Day High: ',
-      'Day Low: ',
-      'Change: ',
-      'Changes Percentage: ',
-      'EPS: ',
-      'Exchange: ',
-      'Market Cap: ',
-      'Name: ',
-      'Open Value: ',
-      'PE: ',
-      'Previous Close: ',
-      'Price Avg 200: ',
-      'Price Avg 50: ',
-      'Year High: ',
-      'Year Low: ',
-    ];
-    List<Widget> children = [];
-
-    for (int pos in Iterable.generate(columnValues.length)) {
-      String value = columnValues[pos];
-      String name = columnNames[pos];
-      if (this.widget.stock.raw[value] != null) {
-        dynamic v = this.widget.stock.raw[value];
-        switch (value) {
-          case 'price':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'quantity':
-            children.add(Text('$name$v'));
-            break;
-          case 'dayHigh':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'change':
-            children
-                .add(Text('$name${(v.isNegative) ? "-" : "+"}\$${v.abs()}'));
-            break;
-          case 'changesPercentage':
-            children.add(Text('$name$v%'));
-            break;
-          case 'eps':
-            children.add(Text('$name${(v.isNegative) ? "-" : "+"}\$${v.abs()}'));
-            break;
-          case 'exchange':
-            children.add(Text('$name$v'));
-            break;
-          case 'marketCap':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'name':
-            children.add(Text('$name$v'));
-            break;
-          case 'openValue':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'pe':
-            children.add(Text('$name$v%'));
-            break;
-          case 'previousClose':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'priceAvg200':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'priceAvg50':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'yearHigh':
-            children.add(Text('$name\$$v'));
-            break;
-          case 'yearLow':
-            children.add(Text('$name\$$v'));
-            break;
-
-          default:
-        }
-        children.add(SizedBox(height: 3));
-      }
-    }
-
-    children.insert(
-        2,
-        Text(
-            'Today\'s Gain/Loss: ${((this.widget.stock.change * this.widget.stock.quantity).isNegative) ? "-" : "+"}\$${(this.widget.stock.change * this.widget.stock.quantity).abs().toStringAsFixed(2)}'));
-    children.insert(3, SizedBox(height: 3));
-
-    showGeneralDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionBuilder: (context, a1, a2, widget) {
-          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
-            child: Opacity(
-              opacity: a1.value,
-              child: AlertDialog(
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                title: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(this.widget.stock.name),
-                    Divider()
-                  ],
-                ),
-                content: Container(
-                  height: (MediaQuery.of(context).size.height / 2),
-                  width: (MediaQuery.of(context).size.width / 3) * 2,
-                  child: ListView(
-
-                    children: children,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-        transitionDuration: Duration(milliseconds: 300),
-        barrierDismissible: true,
-        barrierLabel: '',
-        context: context,
-        pageBuilder: (context, animation1, animation2) {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
-
-    return Card(
-      // shape: (stock.changesPercentage >= 0)
-      //     ? OutlineInputBorder(
-      //         borderSide: BorderSide(width: 1.0, color: Colors.black87))
-      //     : null,
-      // elevation: (stock.changesPercentage >= 0) ? null : 0,
-      // shadowColor: (stock.changesPercentage >= 0) ? null : Colors.black.withOpacity(0),
-      color: (widget.stock.changesPercentage >= 0)
-          ? Color(0xFFC4FFC5)
-          : Color.fromRGBO(255, 209, 208, 1),
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(
-            (widget.stock.changesPercentage >= 0)
-                ? Icons.arrow_upward
-                : Icons.arrow_downward,
-            color: (widget.stock.changesPercentage >= 0)
-                ? Color(0xFFE7E7E7)
-                : Color(0xFFDFDFDF),
-          ),
-          backgroundColor:
-              (widget.stock.changesPercentage >= 0) ? Colors.green : Colors.red,
-          radius: size.height / 37,
-        ),
-        title: Text(widget.stock.symbol, style: theme.textTheme.headline6),
-        subtitle: Text('${widget.stock.changesPercentage.toStringAsFixed(2)}%'),
-        trailing: Container(
-          width: size.height / 5,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              DescribedFeatureOverlay(
-                tapTarget: Icon(Icons.info_outline),
-                featureId: 'infoButton',
-                child: IconButton(
-                  icon: Icon(Icons.info_outline),
-                  onPressed: () => popUp(context),
-                ),
-                title: Text('Stock info'),
-                description: Text(
-                    'Shows a popup with all the info for the stock.  Try it!'),
-                backgroundColor: Colors.green[600],
-              ),
-              IconButton(
-                icon: FaIcon(FontAwesomeIcons.moneyBill),
-                onPressed: sell,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -592,9 +319,5 @@ class BubbleChart extends StatelessWidget {
 //     return
 //   });
 // }
-
-
-
-
 
 // Because 600
