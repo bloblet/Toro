@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/stock.dart';
+import 'package:sembast/sembast.dart';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -22,7 +23,7 @@ class API {
   /// Cache of our portfolio, the stocks that the user owns.
   /// Renews every 15 minutes.
   static const Duration _portfolioCacheRenewTime = Duration(minutes: 15);
-  static List<Stock> _portfolioCache;
+  static List<Stock> portfolioCache;
   static DateTime _lastFetchedPortfolio =
       DateTime.fromMicrosecondsSinceEpoch(0);
 
@@ -31,7 +32,7 @@ class API {
   /// Renews every 1 minute.
   ///
   static const Duration _balanceCacheRenewTime = Duration(minutes: 1);
-  static double _balanceCache;
+  static double balanceCache;
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
@@ -98,7 +99,7 @@ class API {
       stocks.add(Stock(stock));
     }
 
-    _portfolioCache = stocks;
+    portfolioCache = stocks;
     return stocks;
   }
 
@@ -145,12 +146,12 @@ class API {
   /// Throws APIError if the [userID] is not registered, the [token] not valid for the [userID],
   /// or the symbol is invalid.
   Future<List<Stock>> getPortfolio() async {
-    if (_portfolioCache == null ||
+    if (portfolioCache == null ||
         _shouldFetch(_lastFetchedPortfolio,
             duration: _portfolioCacheRenewTime)) {
       return await _fetchPortfolio();
     } else {
-      return _portfolioCache;
+      return portfolioCache;
     }
   }
 
@@ -161,11 +162,11 @@ class API {
   /// Throws APIError if the [userID] is not registered, the [token] not valid for the [userID],
   /// or the symbol is invalid.
   Future<double> getBalance() async {
-    if (_balanceCache == null ||
+    if (balanceCache == null ||
         _shouldFetch(_lastFetchedBalance, duration: _balanceCacheRenewTime)) {
       return await _fetchBalance();
     } else {
-      return _balanceCache;
+      return balanceCache;
     }
   }
 

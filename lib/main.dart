@@ -1,8 +1,8 @@
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
-import 'package:stockSimulator/widgets/market.dart';
-import 'package:stockSimulator/widgets/portfoliov2.dart';
-// import 'package:stockSimulator/widgets/portfoliov2.dart';
+import './widgets/market.dart';
+import './widgets/portfoliov2.dart';
+import './widgets/stockInfo.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,11 +15,16 @@ class MyApp extends StatelessWidget {
       title: 'PyMarkets',
       theme: ThemeData(
         primaryColor: Colors.green,
+        accentColor: Color.fromRGBO(175, 76, 171, 1),
+        primaryTextTheme: TextTheme(
+
+        ),
         scaffoldBackgroundColor: Colors.white,
       ),
       routes: {
         'portfolio': (_) => PortfolioV2(),
-        'market': (_) => Market()
+        'market': (_) => Market(),
+        'displayStock': (_) => StockInfo(),
       },
 
       home: PortfolioV2(),

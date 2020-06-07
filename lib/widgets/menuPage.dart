@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stockSimulator/widgets/stockSimIcons.dart';
 
 import 'zoomScaffold.dart';
 
@@ -34,10 +35,10 @@ class MenuScreen extends StatelessWidget {
       "https://scontent-ort2-2.xx.fbcdn.net/v/t1.0-9/1915547_202232795153_5948859_n.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_ohc=5kx_BQ11ZwkAX8mSZQr&_nc_ht=scontent-ort2-2.xx&oh=53d4028f6c3eb6d2791aede4bc494abe&oe=5F00BB26";
 
   final List<MenuItem> options = [
-    MenuItem(Icons.format_list_bulleted, 'Orders'),
-    MenuItem(Icons.search, 'Search'),
-    MenuItem(Icons.shopping_basket, 'Basket'),
-    MenuItem(Icons.format_list_bulleted, 'Orders'),
+    MenuItem(StockSimIcons.layer_group, 'Portfolio'),
+    MenuItem(Icons.trending_up, 'Market'),
+    MenuItem(Icons.bookmark, 'News'),
+    MenuItem(Icons.group, 'Friends'),
   ];
 
   @override
@@ -55,7 +56,19 @@ class MenuScreen extends StatelessWidget {
             left: 32,
             bottom: 8,
             right: MediaQuery.of(context).size.width / 2.9),
-        color: Color(0xff454dff),
+        // color: Color(0xff454dff),
+        // color: Color(0xffAF4CABff),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.fromRGBO(175, 76, 171, 1),
+              Color.fromRGBO(204, 103, 199, 1),
+              Color.fromRGBO(233, 130, 227, 1),
+            ],
+          ),
+        ),
         child: Column(
           children: <Widget>[
             Row(
@@ -70,27 +83,29 @@ class MenuScreen extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 20,
                   ),
-                )
+                ),
               ],
             ),
             Spacer(),
             Column(
-              children: options.map((item) {
-                return ListTile(
-                  leading: Icon(
-                    item.icon,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  title: Text(
-                    item.title,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                );
-              }).toList(),
+              children: options.map(
+                (item) {
+                  return ListTile(
+                    leading: Icon(
+                      item.icon,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    title: Text(
+                      item.title,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  );
+                },
+              ).toList(),
             ),
             Spacer(),
             ListTile(
@@ -100,8 +115,10 @@ class MenuScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 20,
               ),
-              title: Text('Settings',
-                  style: TextStyle(fontSize: 14, color: Colors.white)),
+              title: Text(
+                'Settings',
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
             ),
             ListTile(
               onTap: () {},
@@ -110,8 +127,10 @@ class MenuScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 20,
               ),
-              title: Text('Support',
-                  style: TextStyle(fontSize: 14, color: Colors.white)),
+              title: Text(
+                'Support',
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
             ),
           ],
         ),

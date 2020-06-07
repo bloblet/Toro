@@ -25,5 +25,6 @@ class StockSimIcons {
   static const _kFontFam = 'StockSimIcons';
   static const _kFontPkg = null;
 
+  static const IconData wallet = IconData(0xf555, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData layer_group = IconData(0xf5fd, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -128,74 +128,67 @@ class _MarketState extends State<Market> with RouteAware {
 
     return TabScaffold(
       body: (context) => FutureProvider<TopGainEvent>(
-        create: ,
-          future: API().topGain(),
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                final List<Widget> children = [
-                  SizedBox(height: 8),
-                  Text("Today's top gainers", style: theme.textTheme.headline5),
-                  SizedBox(height: 8),
-                  Divider(height: 3, color: Colors.grey[600], endIndent: 10),
-                  SizedBox(height: 16),
-                  // Container(
-                  //   decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+        lazy: true,
+          create: (_) => TopGainEvent.getTopGain(),
+          builder: (BuildContext context, Widget child) {
+            List<Stock> topGain = Provider.of<TopGainEvent>(context).data;
 
-                  //   child: Image.network(
-                  //     'https://unsplash.com/photos/uJhgEXPqSPk/download?force=true&w=1920',
-                  //   ),
-                  // ),
-                ];
-                for (Stock stock in snapshot.data) {
-                  children.add(ListTile(
-                      leading: Text(stock.symbol),
-                      title: Text('\$${stock.price.toStringAsFixed(2)}'),
-                      subtitle: Text(
-                          '${(stock.change.isNegative) ? '-' : '+'}\$${stock.change.abs().toStringAsFixed(2)} today'),
-                      trailing: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.assessment),
-                            onPressed: () {}
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.attach_money),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                      dense: true));
-                  if (snapshot.data.indexOf(stock) !=
-                      snapshot.data.length - 1) {
-                    children.add(Divider(height: 2, color: Colors.grey));
-                  }
-                }
-
-                return ListView(
+            final List<Widget> children = [
+              SizedBox(height: 8),
+              Text("Today's top gainers", style: theme.textTheme.headline5),
+              SizedBox(height: 8),
+              Divider(height: 3, color: Colors.grey[600], endIndent: 10),
+              SizedBox(height: 16),
+            ];
+            for (Stock stock in topGain) {
+              children.add(ListTile(
+                  leading: Text(stock.symbol),
+                  title: Text('\$${stock.price.toStringAsFixed(2)}'),
+                  subtitle: Text(
+                      '${(stock.change.isNegative) ? '-' : '+'}\$${stock.change.abs().toStringAsFixed(2)} today'),
+                  trailing: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: children,
-                              mainAxisSize: MainAxisSize.min,
-                            ),
-                          ),
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.assessment),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.attach_money),
+                        onPressed: () {},
                       ),
                     ],
-                  );
-                break;
-              default:
-                return LinearProgressIndicator();
+                  ),
+                  dense: true));
+              if (topGain.indexOf(stock) != topGain.length - 1) {
+                children.add(
+                  Divider(
+                    height: 2,
+                    color: Colors.grey,
+                  ),
+                );
+              }
             }
+
+            return ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: children,
+                        mainAxisSize: MainAxisSize.min,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
           }),
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize,

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:random_color/random_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'serializer.dart';

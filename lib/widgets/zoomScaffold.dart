@@ -17,9 +17,9 @@ class ZoomScaffold extends StatefulWidget {
 class _ZoomScaffoldState extends State<ZoomScaffold>
     with TickerProviderStateMixin {
   Curve scaleDownCurve = Curves.easeInExpo;
-  Curve scaleUpCurve = Curves.easeInExpo;
+  Curve scaleUpCurve = Curves.easeOutExpo;
   Curve slideOutCurve = Curves.easeInExpo;
-  Curve slideInCurve = Curves.easeInExpo;
+  Curve slideInCurve = Curves.easeOutExpo;
 
   createContentDisplay() {
     return zoomAndSlideContent(Container(
@@ -42,26 +42,7 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
                 },
               )
             : widget.contentScreen.contentBuilder(context),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: 0,
-          items: [
-            BottomNavigationBarItem(
-                title: Text(''),
-                icon: Icon(
-                  Icons.home,
-                  color: Colors.grey,
-                )),
-            BottomNavigationBarItem(
-                title: Text(''),
-                icon: Icon(Icons.shopping_basket, color: Colors.grey)),
-            BottomNavigationBarItem(
-                title: Text(''),
-                icon: Icon(Icons.shopping_cart, color: Colors.grey)),
-            BottomNavigationBarItem(
-                title: Text(''), icon: Icon(Icons.person, color: Colors.grey)),
-          ],
-        ),
+
       ),
     ));
   }
