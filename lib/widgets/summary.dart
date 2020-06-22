@@ -26,6 +26,7 @@ class Summary extends StatelessWidget {
                   ..toggle();
               },
             ),
+            
             // Pretend this is a normal appbar
           ),
           SliverList(
