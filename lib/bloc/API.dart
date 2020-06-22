@@ -35,13 +35,13 @@ class API {
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://bloblet.com:9876/';
+  String _apiEndpoint = 'http://pn.bloblet.com:9876/';
 
   // Token to authenticate [userID] for.
-  static String _token =
-      "HmEAjznHP695SjvyBtpt45/BPpk1eDbMXvJfpVsFVMA=";
+  String _token =
+      "kS+RLoGUsPw5STYBFmzY0Q8Zz0pIgh5YIGByNZ0VYEw=";
 
-  static String email = 'piesquared@gmail.com';
+  String email = 'fpiesquared@gmail.com';
 
   /// Default factory constructor for the singleton class
   factory API() {
