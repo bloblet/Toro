@@ -10,24 +10,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FeatureDiscovery(
-        child: MaterialApp(
-      navigatorObservers: [routeObserver],
-      title: 'PyMarkets',
-      theme: ThemeData(
-        primaryColor: Colors.green,
-        accentColor: Color.fromRGBO(175, 76, 171, 1),
-        primaryTextTheme: TextTheme(
-
-        ),
-        scaffoldBackgroundColor: Colors.white,
+      child: MaterialApp(
+        navigatorObservers: [routeObserver],
+        title: 'PyMarkets',
+        theme: ThemeData(
+            primaryColor: Colors.green,
+            accentColor: Color.fromRGBO(175, 76, 171, 1),
+            primaryTextTheme: TextTheme(),
+            scaffoldBackgroundColor: Colors.white),
+        routes: {
+          'portfolio': (_) => PortfolioV2(),
+          'market': (_) => Market(),
+          'displayStock': (_) => StockInfo(),
+        },
+        home: PortfolioV2(),
       ),
-      routes: {
-        'portfolio': (_) => PortfolioV2(),
-        'market': (_) => Market(),
-        'displayStock': (_) => StockInfo(),
-      },
-
-      home: PortfolioV2(),
-    ));
+    );
   }
 }

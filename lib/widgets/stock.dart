@@ -1,9 +1,12 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stockSimulator/models/stock.dart';
+
 enum AppBarButtons { sortByAlpha, sortByGains, sortByLoss }
 
 class PortfolioBody extends StatelessWidget {
@@ -63,47 +66,8 @@ class PortfolioStockElement extends StatefulWidget {
 }
 
 class _PortfolioStockElementState extends State<PortfolioStockElement> {
-
   void sell() {
-    showGeneralDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionBuilder: (context, a1, a2, widget) {
-          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
-            child: Opacity(
-              opacity: a1.value,
-              child: AlertDialog(
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                title: Text(this.widget.stock.name),
-                content: Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Column(
-                    children: <Widget>[
-                      Text('Price: ${this.widget.stock.price}'),
-                      Text('Change: ${this.widget.stock.change}'),
-                      Text(
-                          'Today\'s Gain/Loss: ${(this.widget.stock.change * this.widget.stock.price * this.widget.stock.quantity).toStringAsFixed(2)}'),
-                      Text('Open: ${this.widget.stock.openValue}'),
-                      Text(
-                          'Previous Close: ${this.widget.stock.previousClose}'),
-                      Text('Day high: ${this.widget.stock.dayHigh}'),
-                      Text('Day low: ${this.widget.stock.dayLow}'),
-                      Text('52-Week High: ${this.widget.stock.yearHigh}'),
-                      Text('52-Week Low: ${this.widget.stock.yearLow}')
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-        transitionDuration: Duration(milliseconds: 300),
-        barrierDismissible: true,
-        barrierLabel: '',
-        context: context,
-        pageBuilder: (context, animation1, animation2) {});
+    Navigator.pushNamed(context, 'displayStock', arguments: widget.stock);
   }
 
   void popUp(BuildContext context) {
@@ -170,7 +134,8 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
             children.add(Text('$name$v%'));
             break;
           case 'eps':
-            children.add(Text('$name${(v.isNegative) ? "-" : "+"}\$${v.abs()}'));
+            children
+                .add(Text('$name${(v.isNegative) ? "-" : "+"}\$${v.abs()}'));
             break;
           case 'exchange':
             children.add(Text('$name$v'));
@@ -228,16 +193,12 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(this.widget.stock.name),
-                    Divider()
-                  ],
+                  children: <Widget>[Text(this.widget.stock.name), Divider()],
                 ),
                 content: Container(
                   height: (MediaQuery.of(context).size.height / 2),
                   width: (MediaQuery.of(context).size.width / 3) * 2,
                   child: ListView(
-
                     children: children,
                   ),
                 ),
@@ -258,31 +219,38 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
     final theme = Theme.of(context);
 
     return Card(
-      // shape: (stock.changesPercentage >= 0)
-      //     ? OutlineInputBorder(
-      //         borderSide: BorderSide(width: 1.0, color: Colors.black87))
-      //     : null,
-      // elevation: (stock.changesPercentage >= 0) ? null : 0,
-      // shadowColor: (stock.changesPercentage >= 0) ? null : Colors.black.withOpacity(0),
       color: (widget.stock.changesPercentage >= 0)
           ? Color(0xFFC4FFC5)
           : Color.fromRGBO(255, 209, 208, 1),
       child: ListTile(
         leading: CircleAvatar(
-          child: Icon(
-            (widget.stock.changesPercentage >= 0)
-                ? Icons.arrow_upward
-                : Icons.arrow_downward,
-            color: (widget.stock.changesPercentage >= 0)
-                ? Color(0xFFE7E7E7)
-                : Color(0xFFDFDFDF),
+          child: Transform.rotate(
+            angle: (widget.stock.changesPercentage.abs() >= 1.5) ? 0 : (widget.stock.changesPercentage.abs() >= 0.01) ? pi/4 : pi/2,
+                      child: Icon(
+              (widget.stock.changesPercentage >= 0)
+                  ? Icons.arrow_upward
+                  : Icons.arrow_downward,
+              color: (widget.stock.changesPercentage >= 0)
+                  ? Color(0xFFE7E7E7)
+                  : Color(0xFFDFDFDF),
+            ),
           ),
           backgroundColor:
               (widget.stock.changesPercentage >= 0) ? Colors.green : Colors.red,
           radius: size.height / 37,
         ),
-        title: Text(widget.stock.symbol, style: theme.textTheme.headline6),
-        subtitle: Text('${widget.stock.changesPercentage.toStringAsFixed(2)}%'),
+        title: Text(
+          widget.stock.symbol,
+          style: GoogleFonts.raleway(
+            fontWeight: FontWeight.w600,
+            fontSize: 19,
+            fontFeatures: [
+              FontFeature.enable('lnum'),
+            ],
+          ),
+        ),
+        subtitle: Text('${widget.stock.changesPercentage.toStringAsFixed(2)}%',
+            style: GoogleFonts.openSans()),
         trailing: Container(
           width: size.height / 5,
           child: Row(
@@ -297,7 +265,8 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
                 ),
                 title: Text('Stock info'),
                 description: Text(
-                    'Shows a popup with all the info for the stock.  Try it!'),
+                  'Shows a popup with all the info for the stock.  Try it!',
+                ),
                 backgroundColor: Colors.green[600],
               ),
               IconButton(

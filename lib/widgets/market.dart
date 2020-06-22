@@ -10,6 +10,8 @@ import 'dart:async';
 final routeObserver = RouteObserver<PageRoute>();
 final duration = const Duration(milliseconds: 300);
 
+
+
 class Market extends StatefulWidget {
   @override
   _MarketState createState() => _MarketState();

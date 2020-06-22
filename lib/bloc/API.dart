@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/stock.dart';
-import 'package:sembast/sembast.dart';
+import 'package:hive/hive.dart';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -17,12 +16,12 @@ class API {
   /// To not call the API every other milisecond, we ought to cache stocks,
   /// especially since I plan to add ratelimits to the other API soon.
   /// Renews every 15 minutes, if it is requested.
-  static const Duration _stockCacheRenewTime = Duration(minutes: 15);
+  static const Duration _stockCacheRenewTime = Duration(minutes: 8);
   static Map<String, Stock> _stockCache = {};
 
   /// Cache of our portfolio, the stocks that the user owns.
   /// Renews every 15 minutes.
-  static const Duration _portfolioCacheRenewTime = Duration(minutes: 15);
+  static const Duration _portfolioCacheRenewTime = Duration(minutes: 8);
   static List<Stock> portfolioCache;
   static DateTime _lastFetchedPortfolio =
       DateTime.fromMicrosecondsSinceEpoch(0);
@@ -36,11 +35,13 @@ class API {
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://bloblet.com:4000/';
+  static const String _apiEndpoint = 'http://pn.bloblet.com:9876/';
 
   // Token to authenticate [userID] for.
   static String _token =
-      "64eaacc1aa2b09d1f7e727135c1c3f966355308a70c96526b5c0d9114f5b8caa6397a32845e8fde1e517dff2c8a120cba85d2133b5f2eae9ee71fb2fe28f1db7";
+      "c7+SDXI6CQOhDrUvb/ZWLWSFiWF9HPjH21HaoE1b/zc=";
+
+  static String email = 'piesquared@gmail.com';
 
   /// Default factory constructor for the singleton class
   factory API() {
@@ -48,6 +49,7 @@ class API {
   }
 
   /// This is a constructor, so we can initialize our class in the static member [_cache]
+  /// This should only run once, at the start of our app.
   API._();
 
   void _checkResponse(http.Response res) {
@@ -77,9 +79,10 @@ class API {
   Future<List<Stock>> _fetchPortfolio() async {
     final List<Stock> stocks = [];
     final response = await http.post(
-      '${_apiEndpoint}portfolio',
+      '$_apiEndpoint/app/portfolio',
       body: jsonEncode({
         'token': _token,
+        'email': email
       }),
     );
     _checkResponse(response);
@@ -99,23 +102,29 @@ class API {
       stocks.add(Stock(stock));
     }
 
-    portfolioCache = stocks;
     return stocks;
+  }
+
+  Future<void> updatePortfolioGraph() {
+
   }
 
   /// Fetches the user's latest balance from the server.
   Future<double> _fetchBalance() async {
     final response = await http.post(
-      '${_apiEndpoint}balance',
+      '$_apiEndpoint/app/balance',
       body: jsonEncode({
         'token': _token,
+        'email': email
       }),
     );
     _checkResponse(response);
-    return double.parse(response.body);
+    final balance = double.parse(response.body);
+
+    return balance;
   }
 
-  /// Buys a stock.
+  /// Gets a stock.
   ///
   /// [symbol] - Target stock's symbol.
   ///
@@ -232,7 +241,6 @@ class API {
 
     _checkResponse(response);
     final body = jsonDecode(response.body);
-
     return body;
   }
 

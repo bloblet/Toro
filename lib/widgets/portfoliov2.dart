@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,9 +15,9 @@ import 'stock.dart';
 import 'zoomScaffold.dart';
 
 class PortfolioV2 extends StatelessWidget {
-
   final GlobalKey balanceEventKey = GlobalKey(debugLabel: 'balanceEventKey');
-  final GlobalKey portfiolioEventKey = GlobalKey(debugLabel: 'portfiolioEventKey');
+  final GlobalKey portfiolioEventKey =
+      GlobalKey(debugLabel: 'portfiolioEventKey');
 
   @override
   Widget build(BuildContext _) {
@@ -59,7 +61,12 @@ class PortfolioV2 extends StatelessWidget {
                 ),
                 title: Text(
                   '\$${event.totalValue.toStringAsFixed(2)}',
-                  style: GoogleFonts.openSans(fontSize: 25),
+                  style: GoogleFonts.raleway(
+                    fontSize: 25,
+                    fontFeatures: [
+                      FontFeature.enable('lnum'),
+                    ],
+                  ),
                 ),
                 flexibleSpace: FadeOnScroll(
                   child: Row(
@@ -76,9 +83,16 @@ class PortfolioV2 extends StatelessWidget {
                           SizedBox(
                             height: 16,
                           ),
-                          Text('\$${event.balance.toStringAsFixed(2)}',
-                              style: GoogleFonts.openSans(
-                                  fontSize: 10, fontWeight: FontWeight.normal)),
+                          Text(
+                            '\$${event.balance.toStringAsFixed(2)}',
+                            style: GoogleFonts.raleway(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              fontFeatures: [
+                                FontFeature.enable('lnum'),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -100,9 +114,16 @@ class PortfolioV2 extends StatelessWidget {
                           SizedBox(
                             height: 16,
                           ),
-                          Text('\$${event.stockValue.toStringAsFixed(2)}',
-                              style: GoogleFonts.openSans(
-                                  fontSize: 10, fontWeight: FontWeight.normal)),
+                          Text(
+                            '\$${event.stockValue.toStringAsFixed(2)}',
+                            style: GoogleFonts.raleway(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              fontFeatures: [
+                                FontFeature.enable('lnum'),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ],
