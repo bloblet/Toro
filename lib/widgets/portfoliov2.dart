@@ -47,6 +47,7 @@ class PortfolioV2 extends StatelessWidget {
               return SliverAppBar(
                 elevation: 0,
                 floating: true,
+                snap: true,
                 expandedHeight: 200,
                 centerTitle: true,
                 leading: IconButton(
