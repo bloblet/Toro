@@ -50,6 +50,7 @@ class PortfolioV2 extends StatelessWidget {
                 snap: true,
                 expandedHeight: 200,
                 centerTitle: true,
+                pinned: true,
                 leading: IconButton(
                   icon: Icon(
                     Icons.menu,
