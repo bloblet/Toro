@@ -35,11 +35,11 @@ class API {
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
   /// Current location of the stocks API
-  static const String _apiEndpoint = 'http://pn.bloblet.com:9876/';
+  static const String _apiEndpoint = 'http://bloblet.com:9876/';
 
   // Token to authenticate [userID] for.
   static String _token =
-      "c7+SDXI6CQOhDrUvb/ZWLWSFiWF9HPjH21HaoE1b/zc=";
+      "HmEAjznHP695SjvyBtpt45/BPpk1eDbMXvJfpVsFVMA=";
 
   static String email = 'piesquared@gmail.com';
 
@@ -79,11 +79,12 @@ class API {
   Future<List<Stock>> _fetchPortfolio() async {
     final List<Stock> stocks = [];
     final response = await http.post(
-      '$_apiEndpoint/app/portfolio',
+      '${_apiEndpoint}portfolio',
       body: jsonEncode({
         'token': _token,
         'email': email
       }),
+      headers: {'Content-Type': 'application/json'}
     );
     _checkResponse(response);
 
@@ -112,11 +113,12 @@ class API {
   /// Fetches the user's latest balance from the server.
   Future<double> _fetchBalance() async {
     final response = await http.post(
-      '$_apiEndpoint/app/balance',
+      '${_apiEndpoint}balance',
       body: jsonEncode({
         'token': _token,
         'email': email
       }),
+      headers: {'Content-Type': 'application/json'}
     );
     _checkResponse(response);
     final balance = double.parse(response.body);
