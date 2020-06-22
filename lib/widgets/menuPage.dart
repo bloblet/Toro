@@ -35,6 +35,7 @@ class MenuScreen extends StatelessWidget {
       "https://scontent-ort2-2.xx.fbcdn.net/v/t1.0-9/1915547_202232795153_5948859_n.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_ohc=5kx_BQ11ZwkAX8mSZQr&_nc_ht=scontent-ort2-2.xx&oh=53d4028f6c3eb6d2791aede4bc494abe&oe=5F00BB26";
 
   final List<MenuItem> options = [
+    MenuItem(Icons.assessment, 'Summary', 'summary'),
     MenuItem(StockSimIcons.layer_group, 'Portfolio', 'portfolio'),
     MenuItem(Icons.trending_up, 'Market', 'market'),
     MenuItem(Icons.search, 'Discover', 'search'),
