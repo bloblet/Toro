@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './widgets/market.dart';
 import './widgets/portfoliov2.dart';
 import './widgets/stockInfo.dart';
+import './widgets/summary.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,11 +20,12 @@ class MyApp extends StatelessWidget {
             primaryTextTheme: TextTheme(),
             scaffoldBackgroundColor: Colors.white),
         routes: {
+          'summary': (_) => Summary(),
           'portfolio': (_) => PortfolioV2(),
           'market': (_) => Market(),
           'displayStock': (_) => StockInfo(),
         },
-        home: PortfolioV2(),
+        home: Summary(),
       ),
     );
   }
