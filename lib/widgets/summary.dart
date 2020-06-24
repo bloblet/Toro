@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Summary extends StatelessWidget {
   @override
