@@ -102,7 +102,9 @@ class Summary extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      //add the chart here.
+                      Container(
+                        child: SfCartesianChart(),
+                      ),
                     ],
                   ),
                 ),
@@ -121,7 +123,6 @@ class Summary extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      //add the chart here.
                     ],
                   ),
                 ),
