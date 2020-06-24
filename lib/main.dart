@@ -1,9 +1,11 @@
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
-import './widgets/market.dart';
+import 'package:stockSimulator/widgets/login.dart';
+// import './widgets/market.dart';
 import './widgets/portfoliov2.dart';
 import './widgets/stockInfo.dart';
 import './widgets/summary.dart';
+import 'widgets/ensure_hive_initialized.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return FeatureDiscovery(
       child: MaterialApp(
-        navigatorObservers: [routeObserver],
+        // navigatorObservers: [routeObserver],
         title: 'PyMarkets',
         theme: ThemeData(
             primaryColor: Colors.green,
@@ -22,10 +24,20 @@ class MyApp extends StatelessWidget {
         routes: {
           'summary': (_) => Summary(),
           'portfolio': (_) => PortfolioV2(),
-          'market': (_) => Market(),
+          // 'market': (_) => Market(),
           'displayStock': (_) => StockInfo(),
         },
-        home: Summary(),
+        home: EnsureHiveInitialized(
+          loader: Scaffold(
+            appBar: AppBar(),
+            body: Container(
+              child: CircularProgressIndicator(),
+              width: 100,
+              height: 100,
+            ),
+          ),
+          child: Login(),
+        ),
       ),
     );
   }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:stockSimulator/widgets/market.dart';
 
 import 'menuPage.dart';
-import 'portfoliov2.dart';
 import 'zoomScaffold.dart';
 
 class TabScaffold extends StatefulWidget {
@@ -50,7 +47,7 @@ class _TabScaffoldState extends State<TabScaffold>
       child: ZoomScaffold(
         menuScreen: MenuScreen(),
         contentScreen: Layout(
-          
+
           contentBuilder: widget.body,
         ),
       ),

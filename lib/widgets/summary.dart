@@ -102,23 +102,7 @@ class Summary extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      Container(
-                        child: LineChart(
-                          LineChartData(
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: [
-                                  FlSpot(1, 2),
-                                  FlSpot(2, 4),
-                                  FlSpot(4, 10),
-                                  FlSpot(6, 8),
-                                  FlSpot(10, 25),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                      SummaryChart()
                     ],
                   ),
                 ),
@@ -145,6 +129,47 @@ class Summary extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SummaryChart extends StatefulWidget {
+  @override
+  _SummaryChartState createState() => _SummaryChartState();
+}
+
+class _SummaryChartState extends State<SummaryChart> {
+  List<FlSpot> spots = [];
+  double startMonth;
+  @override
+  void initState() {
+    // final info = API().historyStockBox.toMap().values.toList()[0];
+    // print(API().historyStockBox.toMap().keys.toList());
+    // final sortedKeys = info.keys.toList()..sort();
+    // startMonth = sortedKeys.first.month.toDouble();
+
+    // for (DateTime time in sortedKeys) {
+    //   spots.add(FlSpot(time.month - startMonth, info[time]));
+    // }
+    // setState(() {});
+
+    // super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.23,
+      child: (spots.isEmpty)
+          ? CircularProgressIndicator()
+          : LineChart(
+              LineChartData(
+                lineBarsData: [LineChartBarData(spots: spots)],
+                gridData: FlGridData(
+                  show: false,
+                ),
+              ),
+            ),
     );
   }
 }

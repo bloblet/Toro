@@ -3,9 +3,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import 'package:stockSimulator/models/balance.dart';
-import 'package:stockSimulator/models/portfolio.dart';
 import 'package:stockSimulator/widgets/stock.dart';
 import '../models/stock.dart';
 import 'fadeOnScroll.dart';
@@ -13,6 +12,8 @@ import 'stockSimIcons.dart';
 import 'tabScaffold.dart';
 import 'stock.dart';
 import 'zoomScaffold.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../models/user.dart';
 
 class PortfolioV2 extends StatelessWidget {
   final GlobalKey balanceEventKey = GlobalKey(debugLabel: 'balanceEventKey');
@@ -24,26 +25,25 @@ class PortfolioV2 extends StatelessWidget {
     return TabScaffold(
       body: (zoomContext) => CustomScrollView(
         slivers: <Widget>[
-          FutureProvider<BalanceEvent>.value(
+          ListenableProvider.value(
+            value: Hive.box<User>('me').listenable(keys: ['balance', 'totalValue', 'investedValue']),
             key: balanceEventKey,
-            updateShouldNotify: (previous, current) {
-              print('Update attempt...');
-              if (previous.state != current.state) {
-                print('rebuilding... (state changed)');
-                return true;
-              }
-              if (previous.balance == current.balance &&
-                  previous.stockValue == current.stockValue) {
-                print('values are the same, aborting');
-                return false;
-              }
-              print('rebuilding');
-              return true;
-            },
-            value: BalanceEvent.getBalance(),
-            initialData: BalanceEvent.cached(),
+            // updateShouldNotify: (previous, current) {
+            //   print('Update attempt...');
+            //   if (previous.state != current.state) {
+            //     print('rebuilding... (state changed)');
+            //     return true;
+            //   }
+            //   if (previous.balance == current.balance &&
+            //       previous.stockValue == current.stockValue) {
+            //     print('values are the same, aborting');
+            //     return false;
+            //   }
+            //   print('rebuilding');
+            //   return true;
+            // },
             builder: (balanceContext, child) {
-              BalanceEvent event = Provider.of<BalanceEvent>(balanceContext);
+              User user = Hive.box<User>('me').get('me');
               return SliverAppBar(
                 elevation: 0,
                 floating: true,
@@ -62,7 +62,7 @@ class PortfolioV2 extends StatelessWidget {
                   },
                 ),
                 title: Text(
-                  '\$${event.totalValue.toStringAsFixed(2)}',
+                  '\$${user.totalValue.toStringAsFixed(2)}',
                   style: GoogleFonts.raleway(
                     fontSize: 25,
                     fontFeatures: [
@@ -86,7 +86,7 @@ class PortfolioV2 extends StatelessWidget {
                             height: 16,
                           ),
                           Text(
-                            '\$${event.balance.toStringAsFixed(2)}',
+                            '\$${user.balance.toStringAsFixed(2)}',
                             style: GoogleFonts.raleway(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -117,7 +117,7 @@ class PortfolioV2 extends StatelessWidget {
                             height: 16,
                           ),
                           Text(
-                            '\$${event.stockValue.toStringAsFixed(2)}',
+                            '\$${user.investedValue.toStringAsFixed(2)}',
                             style: GoogleFonts.raleway(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -134,23 +134,14 @@ class PortfolioV2 extends StatelessWidget {
               );
             },
           ),
-          FutureProvider<PortfolioEvent>.value(
+          ListenableProvider.value(
             key: portfiolioEventKey,
-            value: PortfolioEvent.getPortfolio(),
-            initialData: PortfolioEvent([], ConnectionState.waiting),
+            value: Hive.box<User>('me').listenable(keys: ['inventory']),
+
             builder: (context, child) {
-              final portfolioEvent = Provider.of<PortfolioEvent>(context);
-              if (portfolioEvent.state != ConnectionState.done) {
-                return SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                );
-              }
+              User user = Hive.box<User>('me').get('me');
               final List<Widget> children = [];
-              for (Stock stock in portfolioEvent.data) {
+              for (Stock stock in user.inventory) {
                 children.add(PortfolioStockElement(stock: stock));
                 children.add(PortfolioStockElement(stock: stock));
               }

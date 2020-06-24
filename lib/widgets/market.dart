@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:stockSimulator/models/portfolio.dart';
-import 'package:stockSimulator/models/topGain.dart';
 import '../bloc/API.dart';
 import 'package:stockSimulator/models/stock.dart';
 import 'package:stockSimulator/widgets/tabScaffold.dart';
