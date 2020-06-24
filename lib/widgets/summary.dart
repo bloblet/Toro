@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stockSimulator/bloc/API.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -27,10 +28,7 @@ class Summary extends StatelessWidget {
                   ..toggle();
               },
             ),
-
-            title: Text(
-              'Summary'
-            ),
+            title: Text('Summary'),
           ),
           SliverList(
             delegate: SliverChildListDelegate(
@@ -63,13 +61,15 @@ class Summary extends StatelessWidget {
                       Text(
                         "Today's gain/loss",
                         style: TextStyle(
-                          color: Colors.green[700],//balance going up ? Colors.green[700] : Colors.red[700],
+                          color: Colors.green[
+                              700], //balance going up ? Colors.green[700] : Colors.red[700],
                         ),
                       ),
                       Text(
                         "+\$12,345.34",
                         style: TextStyle(
-                          color: Colors.green[700],//balance going up ? Colors.green[700] : Colors.red[700],
+                          color: Colors.green[
+                              700], //balance going up ? Colors.green[700] : Colors.red[700],
                           fontSize: 18,
                         ),
                       ),
