@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../models/stock.dart';
 import 'package:hive/hive.dart';
 
@@ -34,6 +35,8 @@ class API {
   static double balanceCache;
   static DateTime _lastFetchedBalance = DateTime.fromMicrosecondsSinceEpoch(0);
 
+  LazyBox<Map<DateTime, double>> historyStockBox;
+
   /// Current location of the stocks API
   String _apiEndpoint = 'http://pn.bloblet.com:9876/';
 
@@ -50,7 +53,15 @@ class API {
 
   /// This is a constructor, so we can initialize our class in the static member [_cache]
   /// This should only run once, at the start of our app.
-  API._();
+  API._() {
+    init();
+  }
+
+  Future<void> init() async {
+    final path = await getApplicationSupportDirectory();
+    Hive.init(path.path);
+    initStockHistory();
+  }
 
   void _checkResponse(http.Response res) {
     if (res.statusCode != 200) {
@@ -65,6 +76,21 @@ class API {
     Duration duration = const Duration(minutes: 15),
   }) {
     return !DateTime.now().difference(dateTime).compareTo(duration).isNegative;
+  }
+
+
+  /// Gets the stock history box
+  Future<void> initStockHistory() async {
+    historyStockBox = await Hive.openLazyBox('stockHistory');
+    if (historyStockBox.isEmpty) {
+      final history = jsonDecode((await http.get('https://fmpcloud.io/api/v3/historical-price-full/AAPL?timeseries=365&apikey=70531643ff9d1f8bc6b4c57a432e4341')).body);
+      final String symbol = history['symbol'];
+      final Map<DateTime, double> parsedHistory = {};
+      for (final stock in history['historical']) {
+        parsedHistory[DateTime.parse(stock['date'])] = stock['open'];
+      }
+      await historyStockBox.put('symbol', parsedHistory);
+    }
   }
 
   /// Queries the API for [symbol], and returns the corresponding stock.
