@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class Summary extends StatelessWidget {
   @override
@@ -103,7 +103,21 @@ class Summary extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        child: SfCartesianChart(),
+                        child: LineChart(
+                          LineChartData(
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: [
+                                  FlSpot(1, 2),
+                                  FlSpot(2, 4),
+                                  FlSpot(4, 10),
+                                  FlSpot(6, 8),
+                                  FlSpot(10, 25),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
