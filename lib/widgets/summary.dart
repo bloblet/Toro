@@ -105,6 +105,25 @@ class Summary extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  color: Colors.grey[100],
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "Top Gainers/Losers",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      //add the chart here.
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
