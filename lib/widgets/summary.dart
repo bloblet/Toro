@@ -9,7 +9,7 @@ import 'package:fl_chart/fl_chart.dart';
 class Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final me = User.me();
+    final me = User.me;
 
     return TabScaffold(
       body: (zoomContext) => CustomScrollView(
@@ -141,7 +141,7 @@ class SummaryChart extends StatefulWidget {
 class _SummaryChartState extends State<SummaryChart> {
   List<FlSpot> spots = [];
   double startMonth;
-  final me = User.me();
+  final me = User.me;
 
   @override
   void initState() {
