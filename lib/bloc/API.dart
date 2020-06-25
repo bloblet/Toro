@@ -99,18 +99,28 @@ class API {
     return balance;
   }
 
-  Future sellStock(String symbol, int quantity, String token, String email) async {
+  Future sellStock(
+      String symbol, int quantity, String token, String email) async {
     final response = await http.post('${_apiEndpoint}sellStock',
-        body: jsonEncode(
-            {'token': token, 'email': email, 'symbol': symbol, 'quantity': quantity}));
+        body: jsonEncode({
+          'token': token,
+          'email': email,
+          'symbol': symbol,
+          'quantity': quantity
+        }));
 
     _checkResponse(response);
   }
 
-  Future buyStock(String symbol, int quantity, String token, String email) async {
+  Future buyStock(
+      String symbol, int quantity, String token, String email) async {
     final response = await http.post('${_apiEndpoint}buyStock',
-        body: jsonEncode(
-            {'token': token, 'email': email, 'symbol': symbol, 'quantity': quantity}));
+        body: jsonEncode({
+          'token': token,
+          'email': email,
+          'symbol': symbol,
+          'quantity': quantity
+        }));
 
     _checkResponse(response);
   }
@@ -164,6 +174,30 @@ class API {
       ..email = body['email']
       ..token = body['token']
       ..inventory = []
+      ..lastUpdatedBalance = now
+      ..lastUpdatedBalanceHistory = now
+      ..lastUpdatedInventory = now;
+  }
+
+  Future<User> signUp(String email, String password, String username) async {
+    final response = await http.post(
+      '${_apiEndpoint}signUp',
+      body: jsonEncode(
+        {'email': email, 'password': password, 'username': username},
+      ),
+    );
+
+    _checkResponse(response);
+
+    final body = jsonDecode(response.body);
+    final now = DateTime.now();
+
+    return User()
+      ..balance = body['balance']
+      ..balanceHistory = {now: body['balance']}
+      ..email = body['email']
+      ..token = body['token']
+      ..inventory = body['stocks']
       ..lastUpdatedBalance = now
       ..lastUpdatedBalanceHistory = now
       ..lastUpdatedInventory = now;

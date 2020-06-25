@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:pedantic/pedantic.dart';
 import '../bloc/API.dart';
+import 'datahive.dart';
 import 'stock.dart';
 
 part 'user.g.dart';
@@ -81,16 +83,36 @@ class User extends HiveObject {
   }
 
   Future<void> getMissedBalanceHistory() async {
-    final missedBalances =
-        await API().fetchBalanceHistory(lastUpdatedBalanceHistory, token, email);
+    final missedBalances = await API()
+        .fetchBalanceHistory(lastUpdatedBalanceHistory, token, email);
     balanceHistory.addAll(missedBalances);
     List<DateTime> sorted = missedBalances.keys.toList()..sort();
     lastUpdatedInventory = sorted.last;
     unawaited(save());
   }
 
-  static Future<User> signIn(String email, String password) async {
-    return await API().signIn(email, password);
+  static Future<bool> signIn(
+      {@required String email, @required String password}) async {
+    try {
+      final user = await API().signIn(email, password);
+      await DataHive().me.put('me', user);
+      return true;
+    } on APIError {
+      return false;
+    }
+  }
+
+  static Future<bool> signUp(
+      {@required String email,
+      @required String password,
+      @required String username}) async {
+    try {
+      final user = await API().signUp(email, password, username);
+      await DataHive().me.put('me', user);
+      return true;
+    } on APIError {
+      return false;
+    }
   }
 
   Future<void> sellStock(String symbol, int quantity) async {

@@ -85,12 +85,13 @@ class _MyAppState extends State<MyApp> {
               } else {
                 User me = snapshot.data.get('me');
 
-                // me.getMissedBalanceHistory();
+                me.getMissedBalanceHistory();
                 me.updateInventory();
                 me.updateBalance();
 
                 Timer.periodic(Duration(minutes: 1), (_) {
                   print('Updating');
+                  me.getMissedBalanceHistory();
                   me.updateInventory(force: true);
                   me.updateBalance(force: true);
                 });
