@@ -79,7 +79,8 @@ class _MyAppState extends State<MyApp> {
               //       ..lastUpdatedInventory =
               //           DateTime.fromMicrosecondsSinceEpoch(0)
               //       ..totalValue = 25000);
-
+              snapshot.data.clear();
+              
               if (snapshot.data.get('me') == null) {
                 return Login();
               } else {
