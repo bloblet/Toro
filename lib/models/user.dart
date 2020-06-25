@@ -51,12 +51,12 @@ class User extends HiveObject {
 
   Future<void> updateInventory({bool force}) async {
     final now = DateTime.now();
-    if (force ||
+    if (force == true ||
         now
                 .difference(lastUpdatedInventory)
                 .compareTo(updateInventoryInterval) >=
             0) {
-      inventory = await API().fetchPortfolio();
+      inventory = await API().fetchPortfolio(token, email);
       lastUpdatedInventory = now;
       investedValue = 0;
 
@@ -70,10 +70,10 @@ class User extends HiveObject {
 
   Future<void> updateBalance({bool force}) async {
     final now = DateTime.now();
-    if (force ||
+    if (force == true ||
         now.difference(lastUpdatedBalance).compareTo(updateBalanceInterval) >=
             0) {
-      balance = await API().fetchBalance();
+      balance = await API().fetchBalance(token, email);
       lastUpdatedBalance = now;
       totalValue = investedValue + balance;
       unawaited(save());
@@ -82,7 +82,7 @@ class User extends HiveObject {
 
   Future<void> getMissedBalanceHistory() async {
     final missedBalances =
-        await API().fetchBalanceHistory(lastUpdatedBalanceHistory);
+        await API().fetchBalanceHistory(lastUpdatedBalanceHistory, token, email);
     balanceHistory.addAll(missedBalances);
     List<DateTime> sorted = missedBalances.keys.toList()..sort();
     lastUpdatedInventory = sorted.last;
@@ -94,14 +94,14 @@ class User extends HiveObject {
   }
 
   Future<void> sellStock(String symbol, int quantity) async {
-    await API().sellStock(symbol, quantity);
+    await API().sellStock(symbol, quantity, token, email);
     unawaited(updateBalance(force: true));
     unawaited(updateInventory(force: true));
     unawaited(getMissedBalanceHistory());
   }
 
   Future<void> buyStock(String symbol, int quantity) async {
-    await API().buyStock(symbol, quantity);
+    await API().buyStock(symbol, quantity, token, email);
     unawaited(updateBalance(force: true));
     unawaited(updateInventory(force: true));
     unawaited(getMissedBalanceHistory());

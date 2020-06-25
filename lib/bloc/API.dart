@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:stockSimulator/models/user.dart';
 import '../models/stock.dart';
-import 'package:hive/hive.dart';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -46,10 +45,10 @@ class API {
   }
 
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
-  Future<List<Stock>> fetchPortfolio() async {
+  Future<List<Stock>> fetchPortfolio(String token, String email) async {
     final List<Stock> stocks = [];
     final response = await http.post('${_apiEndpoint}portfolio',
-        body: jsonEncode({'token': _token, 'email': email}),
+        body: jsonEncode({'token': token, 'email': email}),
         headers: {'Content-Type': 'application/json'});
     _checkResponse(response);
 
@@ -70,10 +69,10 @@ class API {
   }
 
   Future<Map<DateTime, double>> fetchBalanceHistory(
-      DateTime lastFetched) async {
+      DateTime lastFetched, String token, String email) async {
     final response = await http.post('${_apiEndpoint}balanceHistory',
         body: jsonEncode({
-          'token': _token,
+          'token': token,
           'email': email,
           'lastFetched': lastFetched.toIso8601String(),
         }),
@@ -90,9 +89,9 @@ class API {
   }
 
   /// Fetches the user's latest balance from the server.
-  Future<double> fetchBalance() async {
+  Future<double> fetchBalance(String token, String email) async {
     final response = await http.post('${_apiEndpoint}balance',
-        body: jsonEncode({'token': _token, 'email': email}),
+        body: jsonEncode({'token': token, 'email': email}),
         headers: {'Content-Type': 'application/json'});
     _checkResponse(response);
     final balance = double.parse(response.body);
@@ -100,22 +99,22 @@ class API {
     return balance;
   }
 
-  Future sellStock(String symbol, int quantity) async {
+  Future sellStock(String symbol, int quantity, String token, String email) async {
     final response = await http.post('${_apiEndpoint}sellStock',
         body: jsonEncode(
-            {'token': _token, 'symbol': symbol, 'quantity': quantity}));
+            {'token': token, 'email': email, 'symbol': symbol, 'quantity': quantity}));
 
     _checkResponse(response);
   }
 
-  Future buyStock(String symbol, int quantity) async {
+  Future buyStock(String symbol, int quantity, String token, String email) async {
     final response = await http.post('${_apiEndpoint}buyStock',
         body: jsonEncode(
-            {'token': _token, 'symbol': symbol, 'quantity': quantity}));
+            {'token': token, 'email': email, 'symbol': symbol, 'quantity': quantity}));
 
     _checkResponse(response);
   }
-  
+
   Future<List<Stock>> topGain() async {
     final response = await http.post('${_apiEndpoint}topGain',
         body: jsonEncode({'token': _token}));

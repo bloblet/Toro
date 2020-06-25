@@ -92,21 +92,23 @@ class MenuScreen extends StatelessWidget {
             Column(
               children: options.map(
                 (item) {
-                  return ListTile(
-                    leading: Icon(
-                      item.icon,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    onTap: () {
+                  return FlatButton(
+                    onPressed: () {
                       Navigator.popAndPushNamed(context, item.routeName);
                     },
-                    title: Text(
-                      item.title,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                    child: ListTile(
+                      leading: Icon(
+                        item.icon,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      title: Text(
+                        item.title,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
                     ),
                   );
                 },
