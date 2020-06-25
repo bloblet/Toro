@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:stockSimulator/bloc/API.dart';
+import '../models/user.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -8,6 +9,8 @@ import 'package:fl_chart/fl_chart.dart';
 class Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final me = User.me();
+
     return TabScaffold(
       body: (zoomContext) => CustomScrollView(
         slivers: <Widget>[
@@ -35,7 +38,6 @@ class Summary extends StatelessWidget {
               [
                 Container(
                   padding: EdgeInsets.all(20),
-                  color: Colors.grey[100],
                   child: Column(
                     children: <Widget>[
                       SizedBox(
@@ -52,7 +54,7 @@ class Summary extends StatelessWidget {
                         height: 15,
                       ),
                       Text(
-                        "\$1,234,567.27",
+                        me.formattedBalance,
                         style: TextStyle(
                           fontSize: 50,
                           fontWeight: FontWeight.w100,
@@ -61,15 +63,13 @@ class Summary extends StatelessWidget {
                       Text(
                         "Today's gain/loss",
                         style: TextStyle(
-                          color: Colors.green[
-                              700], //balance going up ? Colors.green[700] : Colors.red[700],
+                          color: (!me.change.isNegative) ? Colors.green[700] : Colors.red[700],
                         ),
                       ),
                       Text(
-                        "+\$12,345.34",
+                      me.formattedChange,
                         style: TextStyle(
-                          color: Colors.green[
-                              700], //balance going up ? Colors.green[700] : Colors.red[700],
+                          color:  (!me.change.isNegative) ? Colors.green[700] : Colors.red[700],
                           fontSize: 18,
                         ),
                       ),
@@ -77,7 +77,7 @@ class Summary extends StatelessWidget {
                         height: 7,
                       ),
                       Text(
-                        "As of 12:10PM ET 6/22/20",
+                        'As of ' + DateFormat('jmz d/M/y').format(me.lastUpdatedBalance),
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -89,10 +89,10 @@ class Summary extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 10,
+                  child: Divider(),
                 ),
                 Container(
                   padding: EdgeInsets.all(20),
-                  color: Colors.grey[100],
                   child: Column(
                     children: <Widget>[
                       Text(
@@ -141,19 +141,21 @@ class SummaryChart extends StatefulWidget {
 class _SummaryChartState extends State<SummaryChart> {
   List<FlSpot> spots = [];
   double startMonth;
+  final me = User.me();
+
   @override
   void initState() {
-    // final info = API().historyStockBox.toMap().values.toList()[0];
-    // print(API().historyStockBox.toMap().keys.toList());
-    // final sortedKeys = info.keys.toList()..sort();
-    // startMonth = sortedKeys.first.month.toDouble();
+    // final balanceHistory = me.balanceHistory;
 
-    // for (DateTime time in sortedKeys) {
-    //   spots.add(FlSpot(time.month - startMonth, info[time]));
+    // List<DateTime> balanceTimes = balanceHistory.keys.toList()..sort();
+
+    // final firstTime = balanceTimes.first;
+
+    // for (DateTime balanceTime in balanceTimes) {
+
     // }
-    // setState(() {});
 
-    // super.initState();
+    super.initState();
   }
 
   @override

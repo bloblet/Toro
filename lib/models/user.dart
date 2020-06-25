@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:pedantic/pedantic.dart';
 import '../bloc/API.dart';
 import 'datahive.dart';
@@ -12,6 +13,17 @@ const updateBalanceInterval = const Duration(minutes: 1);
 
 @HiveType(typeId: 0)
 class User extends HiveObject {
+  factory User.me() {
+    final me = DataHive().me.get('me');
+    if (me == null) {
+      return User();
+    } else {
+      return me;
+    }
+  }
+
+  User();
+
   @HiveField(0)
   String username;
 
@@ -50,6 +62,23 @@ class User extends HiveObject {
 
   @HiveField(12)
   double totalValue;
+
+  String get formattedBalance {
+    final f = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+    return f.format(balance);
+  }
+
+  double get change {
+    final now = DateTime.now();
+    final history = balanceHistory.keys.where((element) => now.day == element.month && now.month == element.month && now.year == element.year);
+    final open = balanceHistory[history];
+    return investedValue - open;
+  }
+
+  String get formattedChange {
+    final f = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+    return f.format(change);
+  }
 
   Future<void> updateInventory({bool force}) async {
     final now = DateTime.now();
