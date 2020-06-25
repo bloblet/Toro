@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockSimulator/constants.dart';
 import "package:stockSimulator/components/welcome_page_button.dart";
+import 'package:stockSimulator/models/user.dart';
 
 class SignUpScreen extends StatefulWidget {
 
@@ -13,6 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showSpinner = false;
   String email;
   String password;
+  String username;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 8.0,
               ),
               TextField(
+                keyboardType: TextInputType.emailAddress,
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  username = value;
+                },
+                decoration:
+                    kSignUpTextFieldDecoration.copyWith(hintText: 'Enter your username'),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              TextField(
                 obscureText: true,
                 textAlign: TextAlign.center,
                 onChanged: (value) {
@@ -70,10 +84,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     showSpinner = true;
                   });
                   try {
-                    
-                    // if (user != null) {
-                    //   Navigator.pushNamed(context, 'summary');
-                    // }
+                    bool successful = await User.signUp(email: email, password: password, username: username);
+                    print(successful);
+                    if (successful) {
+                      print(successful);
+                      Navigator.pushNamed(context, 'summary');
+                    }
 
                     setState(() {
                       showSpinner = false;

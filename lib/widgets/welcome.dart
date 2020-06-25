@@ -4,7 +4,6 @@ import 'package:stockSimulator/models/user.dart';
 import '../models/datahive.dart';
 import '../bloc/API.dart';
 import 'package:hive/hive.dart';
-import '../models/user.dart';
 import 'package:stockSimulator/components/welcome_page_button.dart';
 
 class Welcome extends StatefulWidget {
@@ -99,7 +98,7 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
                   text: 'Sign Up', 
                   color: Colors.green[700], 
                   onPressed: () {
-                    Navigator.pushNamed(context, 'SignupScreen');
+                    Navigator.pushNamed(context, 'signupScreen');
                   },
                 ),
               ],

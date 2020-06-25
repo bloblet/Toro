@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
           'displayStock': (_) => StockInfo(),
           'login': (_) => Welcome(),
           'loginScreen': (_) => LoginScreen(),
-          'SignupScreen': (_) => SignUpScreen(),
+          'signupScreen': (_) => SignUpScreen(),
         },
         home: FutureBuilder<Box<User>>(
           future: init(),
