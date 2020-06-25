@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stockSimulator/models/datahive.dart';
-import 'package:stockSimulator/widgets/login.dart';
+import 'package:stockSimulator/widgets/welcome.dart';
 // import './widgets/market.dart';
 import './widgets/portfoliov2.dart';
 import './widgets/stockInfo.dart';
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           'portfolio': (_) => PortfolioV2(),
           // 'market': (_) => Market(),
           'displayStock': (_) => StockInfo(),
-          'login': (_) => Login(),
+          'login': (_) => Welcome(),
         },
         home: FutureBuilder<Box<User>>(
           future: init(),
@@ -80,9 +80,8 @@ class _MyAppState extends State<MyApp> {
               //           DateTime.fromMicrosecondsSinceEpoch(0)
               //       ..totalValue = 25000);
               snapshot.data.clear();
-
               if (snapshot.data.get('me') == null) {
-                return Login();
+                return Welcome();
               } else {
                 User me = snapshot.data.get('me');
 
