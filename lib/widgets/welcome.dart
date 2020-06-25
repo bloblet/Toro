@@ -92,14 +92,14 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
                   text: 'Login', 
                   color: Colors.green, 
                   onPressed: () {
-
+                    Navigator.pushNamed(context, 'loginScreen');
                   },
                 ),
                 WelcomePageButton(
                   text: 'Sign Up', 
                   color: Colors.green[700], 
                   onPressed: () {
-                    
+                    Navigator.pushNamed(context, 'SignupScreen');
                   },
                 ),
               ],
