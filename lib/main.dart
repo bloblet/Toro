@@ -62,24 +62,24 @@ class _MyAppState extends State<MyApp> {
           future: init(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              // snapshot.data.put(
-              //     'me',
-              //     User()
-              //       ..balance = 25000
-              //       ..email = 'rastley@gmail.com'
-              //       ..username = 'Rick Astley'
-              //       ..token = '0MvQraAC6DxH0yB1wSsq4RCWO4m6g+cDmuzsafXqlDc='
-              //       ..balanceHistory = {}
-              //       ..inventory = []
-              //       ..investedValue = 0
-              //       ..lastUpdatedBalance =
-              //           DateTime.fromMicrosecondsSinceEpoch(0)
-              //       ..lastUpdatedBalanceHistory =
-              //           DateTime.fromMicrosecondsSinceEpoch(0)
-              //       ..lastUpdatedInventory =
-              //           DateTime.fromMicrosecondsSinceEpoch(0)
-              //       ..totalValue = 25000);
-              snapshot.data.clear();
+              snapshot.data.put(
+                  'me',
+                  User()
+                    ..balance = 25000
+                    ..email = 'rastley@gmail.com'
+                    ..username = 'Rick Astley'
+                    ..token = 'ju5COuW/kIAnyd+VN+YHvRq+Jw7YEbx/o9+neHB8gCY='
+                    ..balanceHistory = {}
+                    ..inventory = []
+                    ..investedValue = 0
+                    ..lastUpdatedBalance =
+                        DateTime.fromMicrosecondsSinceEpoch(0)
+                    ..lastUpdatedBalanceHistory =
+                        DateTime.fromMicrosecondsSinceEpoch(0)
+                    ..lastUpdatedInventory =
+                        DateTime.fromMicrosecondsSinceEpoch(0)
+                    ..totalValue = 25000);
+              // snapshot.data.clear();
               if (snapshot.data.get('me') == null) {
                 return Welcome();
               } else {

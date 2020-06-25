@@ -70,7 +70,7 @@ class API {
 
   Future<Map<DateTime, double>> fetchBalanceHistory(
       DateTime lastFetched, String token, String email) async {
-    final response = await http.post('${_apiEndpoint}balanceHistory',
+    final response = await http.post('${_apiEndpoint}getMissedBalanceHistory',
         body: jsonEncode({
           'token': token,
           'email': email,
