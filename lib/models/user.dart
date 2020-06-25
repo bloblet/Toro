@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pedantic/pedantic.dart';
 import '../bloc/API.dart';
+import '../main.dart';
 import 'datahive.dart';
 import 'stock.dart';
 
@@ -14,7 +15,7 @@ const updateBalanceInterval = const Duration(minutes: 1);
 @HiveType(typeId: 0)
 class User extends HiveObject {
   static User get me {
-    final me = DataHive()?.me?.get('me');
+    final me = HiveInitializer()?.me?.get('me');
     if (me == null) {
       print('Me is null');
       return User();
@@ -117,8 +118,13 @@ class User extends HiveObject {
     final missedBalances = await API()
         .fetchBalanceHistory(lastUpdatedBalanceHistory, token, email);
     balanceHistory.addAll(missedBalances);
-    List<DateTime> sorted = missedBalances.keys.toList()..sort();
-    lastUpdatedInventory = sorted.last;
+    if (missedBalances.length == 0) {
+      lastUpdatedInventory = DateTime.now();
+    } else {
+      List<DateTime> sorted = missedBalances.keys.toList()..sort();
+
+      lastUpdatedInventory = sorted.last;
+    }
     unawaited(save());
   }
 
@@ -126,7 +132,8 @@ class User extends HiveObject {
       {@required String email, @required String password}) async {
     try {
       final user = await API().signIn(email, password);
-      await DataHive().me.put('me', user);
+      await HiveInitializer().me.put('me', user);
+      HiveInitializer().startTimer();
       return true;
     } on APIError {
       return false;
@@ -139,7 +146,8 @@ class User extends HiveObject {
       @required String username}) async {
     try {
       final user = await API().signUp(email, password, username);
-      await DataHive().me.put('me', user);
+      await HiveInitializer().me.put('me', user);
+      HiveInitializer().startTimer();
       return true;
     } on APIError {
       return false;

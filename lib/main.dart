@@ -3,12 +3,9 @@ import 'dart:async';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:stockSimulator/models/datahive.dart';
 import 'package:stockSimulator/widgets/login.dart';
 import 'package:stockSimulator/widgets/signup.dart';
 import 'package:stockSimulator/widgets/welcome.dart';
-// import './widgets/market.dart';
 import './widgets/portfoliov2.dart';
 import './widgets/stockInfo.dart';
 import './widgets/summary.dart';
@@ -21,31 +18,54 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
+class HiveInitializer {
+  static HiveInitializer _cache = HiveInitializer._();
+  HiveInitializer._();
+  factory HiveInitializer() {
+    return _cache;
+  }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
+  Box<User> me;
+  static bool hasInitialized = false;
+  static bool startedTimer = false;
+
+  void startTimer() {
+    if (!startedTimer) {
+      User user = me.get('me');
+      Timer.periodic(Duration(minutes: 1), (_) {
+        print('Updating');
+        user.getMissedBalanceHistory();
+        user.updateInventory(force: true);
+        user.updateBalance(force: true);
+      });
+      startedTimer = true;
+    }
   }
 
   Future<Box<User>> init() async {
-    try {
+    if (!hasInitialized) {
+      print('Initializing hive');
+      await Hive.initFlutter();
       Hive.registerAdapter(UserAdapter());
       Hive.registerAdapter(StockAdapter());
-    } catch (_, __) {}
-
-    await Hive.initFlutter('hive');
-    return await Hive.openBox<User>('me');
+      // If you need to test logging in, uncomment \/
+      // await Hive.deleteBoxFromDisk('me');
+      me = await Hive.openBox<User>('me');
+      hasInitialized = true;
+      await Future.delayed(Duration(seconds: 1));
+    }
+    return me;
   }
+}
+
+class MyApp extends StatelessWidget {
+  final HiveInitializer initializer = HiveInitializer();
 
   @override
   Widget build(BuildContext context) {
     return FeatureDiscovery(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         // navigatorObservers: [routeObserver],
         title: 'PyMarkets',
         theme: ThemeData(
@@ -63,27 +83,9 @@ class _MyAppState extends State<MyApp> {
           'signupScreen': (_) => SignUpScreen(),
         },
         home: FutureBuilder<Box<User>>(
-          future: init(),
+          future: initializer.init(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              snapshot.data.put(
-                  'me',
-                  User()
-                    ..balance = 25000
-                    ..email = 'rastley@gmail.com'
-                    ..username = 'Rick Astley'
-                    ..token = 'ju5COuW/kIAnyd+VN+YHvRq+Jw7YEbx/o9+neHB8gCY='
-                    ..balanceHistory = {}
-                    ..inventory = []
-                    ..investedValue = 0
-                    ..lastUpdatedBalance =
-                        DateTime.fromMicrosecondsSinceEpoch(0)
-                    ..lastUpdatedBalanceHistory =
-                        DateTime.fromMicrosecondsSinceEpoch(0)
-                    ..lastUpdatedInventory =
-                        DateTime.fromMicrosecondsSinceEpoch(0)
-                    ..totalValue = 25000);
-              // snapshot.data.clear();
               if (snapshot.data.get('me') == null) {
                 return Welcome();
               } else {
@@ -92,26 +94,21 @@ class _MyAppState extends State<MyApp> {
                 me.getMissedBalanceHistory();
                 me.updateInventory();
                 me.updateBalance();
-
-                Timer.periodic(Duration(minutes: 1), (_) {
-                  print('Updating');
-                  me.getMissedBalanceHistory();
-                  me.updateInventory(force: true);
-                  me.updateBalance(force: true);
-                });
+                HiveInitializer().startTimer();
 
                 return Summary();
               }
             } else {
               return Scaffold(
                 body: Center(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(),
+                  child: Hero(
+                    tag: 'logo',
+                    child: Container(
+                      child: Image.asset('images/temp_logo.png'),
+                      height: 150.0,
+                    ),
                   ),
                 ),
-                appBar: AppBar(),
               );
             }
           },

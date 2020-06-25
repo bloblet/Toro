@@ -31,6 +31,8 @@ class API {
 
   void _checkResponse(http.Response res) {
     if (res.statusCode != 200) {
+      print(
+          '[WARNING] Recived statusCode ${res.statusCode} while sending a ${res.request.method} to ${res.request.url}!');
       throw APIError(
           '[${res.statusCode}]: Reason: ${res.reasonPhrase ?? 'None'} Body: ${res.body ?? 'None'}');
     }
@@ -107,20 +109,24 @@ class API {
           'email': email,
           'symbol': symbol,
           'quantity': quantity
-        }));
+        }),
+        headers: {'Content-Type': 'application/json'});
 
     _checkResponse(response);
   }
 
   Future buyStock(
       String symbol, int quantity, String token, String email) async {
-    final response = await http.post('${_apiEndpoint}buyStock',
-        body: jsonEncode({
-          'token': token,
-          'email': email,
-          'symbol': symbol,
-          'quantity': quantity
-        }));
+    final response = await http.post(
+      '${_apiEndpoint}buyStock',
+      body: jsonEncode({
+        'token': token,
+        'email': email,
+        'symbol': symbol,
+        'quantity': quantity
+      }),
+      headers: {'Content-Type': 'application/json'}
+    );
 
     _checkResponse(response);
   }
@@ -154,21 +160,21 @@ class API {
   }
 
   Future<User> signIn(String email, String password) async {
-    final response = await http.post(
-      '${_apiEndpoint}login',
-      body: jsonEncode(
-        {
-          'email': email,
-          'password': password,
-        },
-      ),
-    );
+    final response = await http.post('${_apiEndpoint}login',
+        body: jsonEncode(
+          {
+            'email': email,
+            'password': password,
+          },
+        ),
+        headers: {'Content-Type': 'application/json'});
     _checkResponse(response);
 
     final body = jsonDecode(response.body);
     final now = DateTime.now();
 
     return User()
+      ..username = body['username']
       ..balance = body['balance']
       ..balanceHistory = {now: body['balance']}
       ..email = body['email']
@@ -180,13 +186,22 @@ class API {
   }
 
   Future<User> signUp(String email, String password, String username) async {
-    final response = await http.post(
-      '${_apiEndpoint}signUp',
-      body: jsonEncode(
-        {'email': email, 'password': password, 'username': username},
-      ),
-    );
+    print('[INFO] Sending request...');
+    final requestStart = DateTime.now();
+    final response = await http.post('${_apiEndpoint}signUp',
+        body: jsonEncode(
+          {'email': email, 'password': password, 'username': username},
+        ),
+        headers: {'Content-Type': 'application/json'});
+    final requestEnd = DateTime.now();
+    final diff = requestEnd.difference(requestStart);
 
+    if (diff.inSeconds >= 2) {
+      print(
+          '[WARNING] Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+    } else {
+      print('[INFO] Response recieved, took ${diff.inMilliseconds}ms!');
+    }
     _checkResponse(response);
 
     final body = jsonDecode(response.body);
@@ -200,7 +215,10 @@ class API {
       ..inventory = body['stocks']
       ..lastUpdatedBalance = now
       ..lastUpdatedBalanceHistory = now
-      ..lastUpdatedInventory = now;
+      ..lastUpdatedInventory = now
+      ..investedValue = 0
+      ..totalValue = body['balance']
+      ..username = username;
   }
 
   // Future<double> totalBalance() async {

@@ -1,12 +1,15 @@
+import 'package:fl_animated_linechart/chart/line_chart.dart';
+import 'package:fl_animated_linechart/fl_animated_linechart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_animated_linechart/main.dart';
 
 class Summary extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final me = User.me;
@@ -63,13 +66,17 @@ class Summary extends StatelessWidget {
                       Text(
                         "Today's gain/loss",
                         style: TextStyle(
-                          color: (!me.change.isNegative) ? Colors.green[700] : Colors.red[700],
+                          color: (!me.change.isNegative)
+                              ? Colors.green[700]
+                              : Colors.red[700],
                         ),
                       ),
                       Text(
-                      me.formattedChange,
+                        me.formattedChange,
                         style: TextStyle(
-                          color:  (!me.change.isNegative) ? Colors.green[700] : Colors.red[700],
+                          color: (!me.change.isNegative)
+                              ? Colors.green[700]
+                              : Colors.red[700],
                           fontSize: 18,
                         ),
                       ),
@@ -77,7 +84,9 @@ class Summary extends StatelessWidget {
                         height: 7,
                       ),
                       Text(
-                        'As of ' + DateFormat('jmz d/M/y').format(me.lastUpdatedBalance),
+                        'As of ' +
+                            DateFormat('h:m M/d/y')
+                                .format(me.lastUpdatedBalance),
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -102,7 +111,10 @@ class Summary extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      SummaryChart()
+                      SizedBox(height: 8),
+                      Center(
+                        child: SummaryChart(),
+                      )
                     ],
                   ),
                 ),
@@ -139,39 +151,55 @@ class SummaryChart extends StatefulWidget {
 }
 
 class _SummaryChartState extends State<SummaryChart> {
-  List<FlSpot> spots = [];
-  double startMonth;
+  int startMonth;
+  int endMonth;
+  double maxY;
+
+  /// Only show values that are within this duration
+  Duration maxDiff = Duration(days: (365 / 2).floor());
+
+  final Map<int, String> months = {
+    DateTime.january: 'January',
+    DateTime.february: 'February',
+    DateTime.march: 'March',
+    DateTime.april: 'April',
+    DateTime.may: 'May',
+    DateTime.june: 'June',
+    DateTime.july: 'July',
+    DateTime.august: 'August',
+    DateTime.september: 'September',
+    DateTime.october: 'October',
+    DateTime.november: 'November',
+    DateTime.december: 'December',
+  };
+
   final me = User.me;
-
-  @override
-  void initState() {
-    // final balanceHistory = me.balanceHistory;
-
-    // List<DateTime> balanceTimes = balanceHistory.keys.toList()..sort();
-
-    // final firstTime = balanceTimes.first;
-
-    // for (DateTime balanceTime in balanceTimes) {
-
-    // }
-
-    super.initState();
+  Map<DateTime, double> getChartData() {
+    final balanceHistory = me.balanceHistory;
+    if (balanceHistory.length == 1) {
+      balanceHistory[DateTime.now()] = me.balance;
+    }
+    return balanceHistory;
   }
+  final summaryKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.23,
-      child: (spots.isEmpty)
-          ? CircularProgressIndicator()
-          : LineChart(
-              LineChartData(
-                lineBarsData: [LineChartBarData(spots: spots)],
-                gridData: FlGridData(
-                  show: false,
-                ),
+      key: summaryKey,
+      aspectRatio: 1,
+      child: (false)
+          ? Center(
+              child: Container(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(),
               ),
-            ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedLineChart(LineChart.fromDateTimeMaps(
+                  [getChartData()], [Colors.blue], ['USD']))),
     );
   }
 }

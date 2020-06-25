@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     print(successful);
                     if (successful) {
                       print(successful);
-                      Navigator.pushNamed(context, 'summary');
+                      Navigator.pushNamedAndRemoveUntil(context, 'summary', ModalRoute.withName('/'));
                     }
 
                     setState(() {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stockSimulator/models/user.dart';
 import 'package:stockSimulator/widgets/stockSimIcons.dart';
 
+import '../main.dart';
 import 'zoomScaffold.dart';
 
 class CircularImage extends StatelessWidget {
@@ -80,7 +82,7 @@ class MenuScreen extends StatelessWidget {
                   child: CircularImage(NetworkImage(imageUrl)),
                 ),
                 Text(
-                  'RickA',
+                  User.me.username,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

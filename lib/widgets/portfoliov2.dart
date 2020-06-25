@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:stockSimulator/components/welcome_page_button.dart';
 import 'package:stockSimulator/widgets/stock.dart';
 import '../models/stock.dart';
 import 'fadeOnScroll.dart';
@@ -26,7 +27,8 @@ class PortfolioV2 extends StatelessWidget {
       body: (zoomContext) => CustomScrollView(
         slivers: <Widget>[
           ListenableProvider.value(
-            value: Hive.box<User>('me').listenable(keys: ['balance', 'totalValue', 'investedValue']),
+            value: Hive.box<User>('me')
+                .listenable(keys: ['balance', 'totalValue', 'investedValue']),
             key: balanceEventKey,
             // updateShouldNotify: (previous, current) {
             //   print('Update attempt...');
@@ -137,13 +139,25 @@ class PortfolioV2 extends StatelessWidget {
           ListenableProvider.value(
             key: portfiolioEventKey,
             value: Hive.box<User>('me').listenable(keys: ['inventory']),
-
             builder: (context, child) {
               User user = Hive.box<User>('me').get('me');
               final List<Widget> children = [];
               for (Stock stock in user.inventory) {
                 children.add(PortfolioStockElement(stock: stock));
                 children.add(PortfolioStockElement(stock: stock));
+              }
+              if (children.isEmpty) {
+                children.add(SizedBox(height: 16));
+                children.add(
+                  Center(
+                    child: WelcomePageButton(
+                      text: 'No stocks yet.  Try going to Discover!',
+                      color: Colors.green,
+                      onPressed: () =>
+                          Navigator.popAndPushNamed(context, 'discover'),
+                    ),
+                  ),
+                );
               }
               return SliverList(
                 delegate: SliverChildListDelegate(children),
