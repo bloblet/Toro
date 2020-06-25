@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockSimulator/constants.dart';
 import "package:stockSimulator/components/welcome_page_button.dart";
+import 'package:stockSimulator/models/user.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -70,11 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     showSpinner = true;
                   });
                   try {
-                    
-                    // if (user != null) {
-                    //   Navigator.pushNamed(context, 'summary');
-                    // }
-
+                    bool successful = await User.signIn(email: email, password: password);
+                    if (successful) {
+                      Navigator.pushNamed(context, 'summary');
+                    }
                     setState(() {
                       showSpinner = false;
                     });
