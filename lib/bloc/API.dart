@@ -74,7 +74,7 @@ class API {
         body: jsonEncode({
           'token': token,
           'email': email,
-          'lastFetched': lastFetched.toIso8601String(),
+          'lastBalance': lastFetched.toIso8601String(),
         }),
         headers: {'Content-Type': 'application/json'});
     _checkResponse(response);
