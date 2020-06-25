@@ -14,7 +14,7 @@ const updateBalanceInterval = const Duration(minutes: 1);
 @HiveType(typeId: 0)
 class User extends HiveObject {
   factory User.me() {
-    final me = DataHive().me.get('me');
+    final me = DataHive()?.me?.get('me');
     if (me == null) {
       return User();
     } else {
