@@ -209,7 +209,7 @@ class API {
 
     return User()
       ..balance = body['balance']
-      ..balanceHistory = {now: body['balance']}
+      ..balanceHistory = {now: 0}
       ..email = body['email']
       ..token = body['token']
       ..inventory = body['stocks']

@@ -71,10 +71,9 @@ class User extends HiveObject {
   }
 
   double get change {
-    // final now = DateTime.now();
-    // final history = balanceHistory.keys.where((element) => now.day == element.month && now.month == element.month && now.year == element.year);
-    // final open = balanceHistory[history];
-    // return investedValue - open;
+    final now = DateTime.now();
+    final history = balanceHistory.keys.where((element) => now.day == element.month && now.month == element.month && now.year == element.year);
+    final open = balanceHistory[history];
     return 1;
   }
 

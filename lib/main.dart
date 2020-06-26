@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:stockSimulator/widgets/login.dart';
-import 'package:stockSimulator/widgets/signup.dart';
-import 'package:stockSimulator/widgets/welcome.dart';
-import './widgets/portfoliov2.dart';
-import './widgets/stockInfo.dart';
-import './widgets/summary.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:hive/hive.dart';
+import 'widgets/login.dart';
+import 'widgets/signup.dart';
+import 'widgets/welcome.dart';
+import 'widgets/portfoliov2.dart';
+import 'widgets/stockInfo.dart';
+import 'widgets/summary.dart';
 import 'models/stock.dart';
 import 'models/user.dart';
 
@@ -28,11 +28,13 @@ class HiveInitializer {
   Box<User> me;
   static bool hasInitialized = false;
   static bool startedTimer = false;
+  static Timer timer;
 
   void startTimer() {
     if (!startedTimer) {
       User user = me.get('me');
-      Timer.periodic(Duration(minutes: 1), (_) {
+      print('Starting timer...');
+      timer = Timer.periodic(Duration(minutes: 1), (_) {
         print('Updating');
         user.getMissedBalanceHistory();
         user.updateInventory(force: true);

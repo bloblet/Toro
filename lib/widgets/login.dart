@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:stockSimulator/constants.dart';
-import "package:stockSimulator/components/welcome_page_button.dart";
-import 'package:stockSimulator/models/user.dart';
+import '../constants.dart';
+import '../components/welcome_page_button.dart';
+import '../models/user.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -12,8 +12,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool showSpinner = false;
-  String email;
-  String password;
+
+  final email = TextEditingController();
+  final password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 keyboardType: TextInputType.emailAddress,
                 textAlign: TextAlign.center,
-                onChanged: (value) {
-                  email = value;
-                },
+                controller: email,
                 decoration:
                     kLoginTextFieldDecoration.copyWith(hintText: 'Enter your email'),
               ),
@@ -54,9 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 obscureText: true,
                 textAlign: TextAlign.center,
-                onChanged: (value) {
-                  password = value;
-                },
+                controller: password,
                 decoration: kLoginTextFieldDecoration.copyWith(
                     hintText: 'Enter your password'),
               ),
@@ -71,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     showSpinner = true;
                   });
                   try {
-                    bool successful = await User.signIn(email: email, password: password);
+                    bool successful = await User.signIn(email: email.text, password: password.text);
                     if (successful) {
                       Navigator.pushNamed(context, 'summary');
                     }

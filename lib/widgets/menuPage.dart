@@ -39,8 +39,7 @@ class MenuScreen extends StatelessWidget {
   final List<MenuItem> options = [
     MenuItem(Icons.assessment, 'Summary', 'summary'),
     MenuItem(StockSimIcons.layer_group, 'Portfolio', 'portfolio'),
-    MenuItem(Icons.trending_up, 'Market', 'market'),
-    MenuItem(Icons.search, 'Discover', 'search'),
+    MenuItem(Icons.trending_up, 'Trade', 'trade'),
     MenuItem(Icons.bookmark, 'News', 'news'),
     MenuItem(Icons.group, 'Friends', 'friends'),
   ];
@@ -75,20 +74,24 @@ class MenuScreen extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: CircularImage(NetworkImage(imageUrl)),
-                ),
-                Text(
-                  User.me.username,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+            DrawerHeader(
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero,
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: CircularImage(NetworkImage(imageUrl)),
                   ),
-                ),
-              ],
+                  Text(
+                    User.me.username,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Spacer(),
             Column(

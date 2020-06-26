@@ -9,7 +9,6 @@ import 'zoomScaffold.dart';
 import 'package:fl_animated_linechart/main.dart';
 
 class Summary extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final me = User.me;
@@ -145,19 +144,7 @@ class Summary extends StatelessWidget {
   }
 }
 
-class SummaryChart extends StatefulWidget {
-  @override
-  _SummaryChartState createState() => _SummaryChartState();
-}
-
-class _SummaryChartState extends State<SummaryChart> {
-  int startMonth;
-  int endMonth;
-  double maxY;
-
-  /// Only show values that are within this duration
-  Duration maxDiff = Duration(days: (365 / 2).floor());
-
+class SummaryChart extends StatelessWidget{
   final Map<int, String> months = {
     DateTime.january: 'January',
     DateTime.february: 'February',
@@ -177,16 +164,16 @@ class _SummaryChartState extends State<SummaryChart> {
   Map<DateTime, double> getChartData() {
     final balanceHistory = me.balanceHistory;
     if (balanceHistory.length == 1) {
-      balanceHistory[DateTime.now()] = me.balance;
+      balanceHistory[DateTime.now()] = 0;
     }
     return balanceHistory;
   }
+
   final summaryKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      key: summaryKey,
       aspectRatio: 1,
       child: (false)
           ? Center(
@@ -198,8 +185,15 @@ class _SummaryChartState extends State<SummaryChart> {
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
-              child: AnimatedLineChart(LineChart.fromDateTimeMaps(
-                  [getChartData()], [Colors.blue], ['USD']))),
+              child: AnimatedLineChart(
+                LineChart.fromDateTimeMaps(
+                  [getChartData()],
+                  [Colors.blue],
+                  ['USD'],
+                ),
+                key: summaryKey,
+              ),
+            ),
     );
   }
 }
