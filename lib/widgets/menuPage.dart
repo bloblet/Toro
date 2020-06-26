@@ -39,7 +39,7 @@ class MenuScreen extends StatelessWidget {
   final List<MenuItem> options = [
     MenuItem(Icons.assessment, 'Summary', 'summary'),
     MenuItem(StockSimIcons.layer_group, 'Portfolio', 'portfolio'),
-    MenuItem(Icons.trending_up, 'Trade', 'trade'),
+    MenuItem(Icons.compare_arrows, 'Trade', 'trade'),
     MenuItem(Icons.bookmark, 'News', 'news'),
     MenuItem(Icons.group, 'Friends', 'friends'),
   ];

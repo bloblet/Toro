@@ -97,7 +97,10 @@ class Summary extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 10,
-                  child: Divider(),
+                  child: Divider(
+                    thickness: 7,
+                    color: Colors.grey[200],
+                  ),
                 ),
                 Container(
                   padding: EdgeInsets.all(20),
@@ -119,10 +122,14 @@ class Summary extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 10,
+                  child: Divider(
+                    thickness: 7,
+                    color: Colors.grey[200],
+                  ),
                 ),
                 Container(
                   padding: EdgeInsets.all(20),
-                  color: Colors.grey[100],
+                  color: Colors.white,
                   child: Column(
                     children: <Widget>[
                       Text(
