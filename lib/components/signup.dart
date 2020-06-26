@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:stockSimulator/constants.dart';
-import "package:stockSimulator/components/welcome_page_button.dart";
-import 'package:stockSimulator/models/user.dart';
+
+import '../models/user.dart';
+import '../constants.dart';
+
+import 'welcome_page_button.dart';
 
 class SignUpScreen extends StatefulWidget {
 

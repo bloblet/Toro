@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:stockSimulator/models/user.dart';
+
+import '../models/user.dart';
 import '../models/stock.dart';
 
 /// Factory API class, no need to store it anywhere.

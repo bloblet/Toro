@@ -15,7 +15,7 @@ const updateBalanceInterval = const Duration(minutes: 1);
 @HiveType(typeId: 0)
 class User extends HiveObject {
   static User get me {
-    final me = HiveInitializer()?.me?.get('me');
+    final me = AppInitializer()?.me?.get('me');
     if (me == null) {
       print('Me is null');
       return User();
@@ -131,8 +131,8 @@ class User extends HiveObject {
       {@required String email, @required String password}) async {
     try {
       final user = await API().signIn(email, password);
-      await HiveInitializer().me.put('me', user);
-      HiveInitializer().startTimer();
+      await AppInitializer().me.put('me', user);
+      AppInitializer().startTimer();
       return true;
     } on APIError {
       return false;
@@ -145,8 +145,8 @@ class User extends HiveObject {
       @required String username}) async {
     try {
       final user = await API().signUp(email, password, username);
-      await HiveInitializer().me.put('me', user);
-      HiveInitializer().startTimer();
+      await AppInitializer().me.put('me', user);
+      AppInitializer().startTimer();
       return true;
     } on APIError {
       return false;

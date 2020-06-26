@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stockSimulator/models/user.dart';
-import 'package:stockSimulator/widgets/stockSimIcons.dart';
 
-import '../main.dart';
+import '../models/user.dart';
+import '../components/stockSimIcons.dart';
 import 'zoomScaffold.dart';
 
 class CircularImage extends StatelessWidget {

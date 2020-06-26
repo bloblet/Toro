@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stockSimulator/models/stock.dart';
+
+import '../models/stock.dart';
 
 enum AppBarButtons { sortByAlpha, sortByGains, sortByLoss }
 
@@ -92,19 +92,23 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
                   child: ListView(
                     children: [
                       Text(
-            'Today\'s Gain/Loss: ${((this.widget.stock.change * this.widget.stock.quantity).isNegative) ? "-" : "+"}\$${(this.widget.stock.change * this.widget.stock.quantity).abs().toStringAsFixed(2)}'),
+                          'Today\'s Gain/Loss: ${((this.widget.stock.change * this.widget.stock.quantity).isNegative) ? "-" : "+"}\$${(this.widget.stock.change * this.widget.stock.quantity).abs().toStringAsFixed(2)}'),
                       SizedBox(height: 3),
-                      Text('Price: \$${this.widget.stock.price.toStringAsFixed(2)}'),
+                      Text(
+                          'Price: \$${this.widget.stock.price.toStringAsFixed(2)}'),
                       (this.widget.stock.change.isNegative)
-                        ? Text('Change: -\$${this.widget.stock.change.toStringAsFixed(2)}')
-                        : Text('Change: +\$${this.widget.stock.change.toStringAsFixed(2)}'),
-                      (this.widget.stock.changesPercentage.isNegative) ?
-                      Text('Change percent: -\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}')
-                      : Text('Change percent: +\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}'),
+                          ? Text(
+                              'Change: -\$${this.widget.stock.change.toStringAsFixed(2)}')
+                          : Text(
+                              'Change: +\$${this.widget.stock.change.toStringAsFixed(2)}'),
+                      (this.widget.stock.changesPercentage.isNegative)
+                          ? Text(
+                              'Change percent: -\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}')
+                          : Text(
+                              'Change percent: +\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}'),
                       Text('Open: ${this.widget.stock.open}'),
                       Text('Quantity: ${this.widget.stock.quantity}'),
                       SizedBox(height: 3),
-
                     ],
                   ),
                 ),
@@ -166,18 +170,9 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              DescribedFeatureOverlay(
-                tapTarget: Icon(Icons.info_outline),
-                featureId: 'infoButton',
-                child: IconButton(
-                  icon: Icon(Icons.info_outline),
-                  onPressed: () => popUp(context),
-                ),
-                title: Text('Stock info'),
-                description: Text(
-                  'Shows a popup with all the info for the stock.  Try it!',
-                ),
-                backgroundColor: Colors.green[600],
+              IconButton(
+                icon: Icon(Icons.info_outline),
+                onPressed: () => popUp(context),
               ),
               IconButton(
                 icon: Icon(Icons.attach_money),

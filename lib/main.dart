@@ -1,17 +1,18 @@
 import 'dart:async';
 
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:hive/hive.dart';
-import 'widgets/login.dart';
-import 'widgets/signup.dart';
-import 'widgets/trade.dart';
-import 'widgets/welcome.dart';
-import 'widgets/portfoliov2.dart';
-import 'widgets/stockInfo.dart';
-import 'widgets/summary.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'components/login.dart';
+import 'components/signup.dart';
+import 'components/trade.dart';
+import 'components/welcome.dart';
+import 'components/portfoliov2.dart';
+import 'components/stockInfo.dart';
+import 'components/summary.dart';
+
 import 'models/stock.dart';
 import 'models/user.dart';
 
@@ -19,10 +20,10 @@ void main() {
   runApp(MyApp());
 }
 
-class HiveInitializer {
-  static HiveInitializer _cache = HiveInitializer._();
-  HiveInitializer._();
-  factory HiveInitializer() {
+class AppInitializer {
+  static AppInitializer _cache = AppInitializer._();
+  AppInitializer._();
+  factory AppInitializer() {
     return _cache;
   }
 
@@ -30,6 +31,7 @@ class HiveInitializer {
   static bool hasInitialized = false;
   static bool startedTimer = false;
   static Timer timer;
+  final firebaseMessaging = FirebaseMessaging();
 
   void startTimer() {
     if (!startedTimer) {
@@ -47,12 +49,17 @@ class HiveInitializer {
 
   Future<Box<User>> init() async {
     if (!hasInitialized) {
+      firebaseMessaging.configure(
+      onBackgroundMessage: (Map<String, dynamic> message) async {
+        // TODO IMPLEMENT MESSAGE HANDLER
+      },
+    );
       print('Initializing hive');
       await Hive.initFlutter();
       Hive.registerAdapter(UserAdapter());
       Hive.registerAdapter(StockAdapter());
       // If you need to test logging in, uncomment \/
-      // await Hive.deleteBoxFromDisk('me');
+      await Hive.deleteBoxFromDisk('me');
       me = await Hive.openBox<User>('me');
       hasInitialized = true;
       await Future.delayed(Duration(seconds: 1));
@@ -62,61 +69,57 @@ class HiveInitializer {
 }
 
 class MyApp extends StatelessWidget {
-  final HiveInitializer initializer = HiveInitializer();
+  final AppInitializer initializer = AppInitializer();
 
   @override
   Widget build(BuildContext context) {
-    return FeatureDiscovery(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // navigatorObservers: [routeObserver],
-        title: 'PyMarkets',
-        theme: ThemeData(
-            primaryColor: Colors.green,
-            accentColor: Color.fromRGBO(175, 76, 171, 1),
-            primaryTextTheme: TextTheme(),
-            scaffoldBackgroundColor: Colors.white),
-        routes: {
-          'summary': (_) => Summary(),
-          'portfolio': (_) => PortfolioV2(),
-          // 'market': (_) => Market(),
-          'displayStock': (_) => StockInfo(),
-          'login': (_) => Welcome(),
-          'loginScreen': (_) => LoginScreen(),
-          'signupScreen': (_) => SignUpScreen(),
-          'trade': (_) => TradeScreen(),
-        },
-        home: FutureBuilder<Box<User>>(
-          future: initializer.init(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data.get('me') == null) {
-                return Welcome();
-              } else {
-                User me = snapshot.data.get('me');
-
-                me.getMissedBalanceHistory();
-                me.updateInventory();
-                me.updateBalance();
-                HiveInitializer().startTimer();
-
-                return Summary();
-              }
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'PyMarkets',
+      theme: ThemeData(
+          primaryColor: Colors.green,
+          accentColor: Color.fromRGBO(175, 76, 171, 1),
+          primaryTextTheme: TextTheme(),
+          scaffoldBackgroundColor: Colors.white),
+      routes: {
+        'summary': (_) => Summary(),
+        'portfolio': (_) => PortfolioV2(),
+        'displayStock': (_) => StockInfo(),
+        'login': (_) => Welcome(),
+        'loginScreen': (_) => LoginScreen(),
+        'signupScreen': (_) => SignUpScreen(),
+        'trade': (_) => TradeScreen(),
+      },
+      home: FutureBuilder<Box<User>>(
+        future: initializer.init(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data.get('me') == null) {
+              return Welcome();
             } else {
-              return Scaffold(
-                body: Center(
-                  child: Hero(
-                    tag: 'logo',
-                    child: Container(
-                      child: Image.asset('images/temp_logo.png'),
-                      height: 150.0,
-                    ),
+              User me = snapshot.data.get('me');
+
+              me.getMissedBalanceHistory();
+              me.updateInventory();
+              me.updateBalance();
+              AppInitializer().startTimer();
+
+              return Summary();
+            }
+          } else {
+            return Scaffold(
+              body: Center(
+                child: Hero(
+                  tag: 'logo',
+                  child: Container(
+                    child: Image.asset('images/temp_logo.png'),
+                    height: 150.0,
                   ),
                 ),
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

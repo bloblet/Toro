@@ -1,20 +1,20 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-import 'package:stockSimulator/components/welcome_page_button.dart';
-import 'package:stockSimulator/widgets/stock.dart';
+
 import '../models/stock.dart';
+import '../models/user.dart';
+
+import 'welcome_page_button.dart';
+import 'stock.dart';
 import 'fadeOnScroll.dart';
 import 'stockSimIcons.dart';
 import 'tabScaffold.dart';
-import 'stock.dart';
 import 'zoomScaffold.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../models/user.dart';
 
 class PortfolioV2 extends StatelessWidget {
   final GlobalKey balanceEventKey = GlobalKey(debugLabel: 'balanceEventKey');
@@ -142,7 +142,7 @@ class PortfolioV2 extends StatelessWidget {
             builder: (context, child) {
               User user = Hive.box<User>('me').get('me');
               final List<Widget> children = [];
-              for (Stock stock in user.inventory) {
+              for (Stock stock in user?.inventory) {
                 children.add(PortfolioStockElement(stock: stock));
                 children.add(PortfolioStockElement(stock: stock));
               }

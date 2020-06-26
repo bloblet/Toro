@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:stockSimulator/models/user.dart';
-import '../models/datahive.dart';
-import '../bloc/API.dart';
-import 'package:hive/hive.dart';
-import 'package:stockSimulator/components/welcome_page_button.dart';
+import 'welcome_page_button.dart';
 
 class Welcome extends StatefulWidget {
   @override
