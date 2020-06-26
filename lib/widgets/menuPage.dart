@@ -40,6 +40,7 @@ class MenuScreen extends StatelessWidget {
     MenuItem(Icons.assessment, 'Summary', 'summary'),
     MenuItem(StockSimIcons.layer_group, 'Portfolio', 'portfolio'),
     MenuItem(Icons.trending_up, 'Market', 'market'),
+    MenuItem(Icons.compare_arrows, 'Trade', 'trade'),
     MenuItem(Icons.search, 'Discover', 'search'),
     MenuItem(Icons.bookmark, 'News', 'news'),
     MenuItem(Icons.group, 'Friends', 'friends'),

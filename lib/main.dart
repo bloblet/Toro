@@ -9,6 +9,7 @@ import 'package:stockSimulator/widgets/welcome.dart';
 import './widgets/portfoliov2.dart';
 import './widgets/stockInfo.dart';
 import './widgets/summary.dart';
+import './widgets/trade.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'models/stock.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
           'login': (_) => Welcome(),
           'loginScreen': (_) => LoginScreen(),
           'signupScreen': (_) => SignUpScreen(),
+          'trade': (_) => TradeScreen(),
         },
         home: FutureBuilder<Box<User>>(
           future: initializer.init(),
