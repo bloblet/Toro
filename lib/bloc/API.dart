@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
@@ -21,6 +22,8 @@ class API {
 
   String email = 'fpiesquared@gmail.com';
 
+  static const debug = true;
+
   /// Default factory constructor for the singleton class
   factory API() {
     return _cache;
@@ -30,32 +33,167 @@ class API {
   /// This should only run once, at the start of our app.
   API._();
 
-  void _checkResponse(http.Response res) {
-    if (res.statusCode != 200) {
+  Future<http.Response> get(String url, {String body}) async {
+    if (debug) {
+      print('[INFO] Sending GET request to $url...');
+    }
+    final uri = Uri.parse(url);
+    final request = http.Request('GET', uri);
+    request.body = body;
+    request.headers['Content-Type'] = 'application/json';
+
+    final start = DateTime.now();
+    final _res = await request.send();
+
+    if (debug && _res.statusCode > 200) {
       print(
-          '[WARNING] Recived statusCode ${res.statusCode} while sending a ${res.request.method} to ${res.request.url}!');
+          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
+      print('[WARNING] > ${uri.path} Request body was $body');
+    }
+
+    final res = await http.Response.fromStream(_res);
+    final end = DateTime.now();
+
+    final diff = end.difference(start);
+    if (debug) {
+      if (diff.inSeconds >= 2) {
+        print(
+            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+      } else {
+        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+      }
+    }
+
+    return res;
+  }
+
+  Future<http.Response> put(String url, {String body}) async {
+    if (debug) {
+      print('[INFO] Sending PUT request to $url...');
+    }
+    final uri = Uri.parse(url);
+    final request = http.Request('PUT', uri);
+    request.body = body;
+    request.headers['Content-Type'] = 'application/json';
+
+    final start = DateTime.now();
+    final _res = await request.send();
+
+    if (debug && _res.statusCode > 200) {
+      print(
+          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
+      print('[WARNING] > ${uri.path} Request body was $body');
+    }
+
+    final res = await http.Response.fromStream(_res);
+    final end = DateTime.now();
+
+    final diff = end.difference(start);
+    if (debug) {
+      if (diff.inSeconds >= 2) {
+        print(
+            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+      } else {
+        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+      }
+    }
+
+    return res;
+  }
+
+  Future<http.Response> delete(String url, {String body}) async {
+    if (debug) {
+      print('[INFO] Sending DELETE request to $url...');
+    }
+    final uri = Uri.parse(url);
+    final request = http.Request('DELETE', uri);
+    request.body = body;
+    request.headers['Content-Type'] = 'application/json';
+
+    final start = DateTime.now();
+    final _res = await request.send();
+
+    if (debug && _res.statusCode > 200) {
+      print(
+          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
+      print('[WARNING] > ${uri.path} Request body was $body');
+    }
+
+    final res = await http.Response.fromStream(_res);
+    final end = DateTime.now();
+
+    final diff = end.difference(start);
+    if (debug) {
+      if (diff.inSeconds >= 2) {
+        print(
+            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+      } else {
+        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+      }
+    }
+
+    return res;
+  }
+
+  Future<http.Response> post(String url, {String body}) async {
+    if (debug) {
+      print('[INFO] Sending POST request to $url...');
+    }
+    final uri = Uri.parse(url);
+    final request = http.Request('POST', uri);
+    request.body = body;
+    request.headers['Content-Type'] = 'application/json';
+
+    final start = DateTime.now();
+    final _res = await request.send();
+
+    if (debug && _res.statusCode > 200) {
+      print(
+          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
+      print('[WARNING] > ${uri.path} Request body was $body');
+    }
+
+    final res = await http.Response.fromStream(_res);
+    final end = DateTime.now();
+
+    final diff = end.difference(start);
+    if (debug) {
+      if (diff.inSeconds >= 2) {
+        print(
+            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+      } else {
+        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+      }
+    }
+
+    return res;
+  }
+
+  void _checkResponse(http.Response res) {
+    if (res.statusCode != 200 || res.statusCode != 201) {
       throw APIError(
           '[${res.statusCode}]: Reason: ${res.reasonPhrase ?? 'None'} Body: ${res.body ?? 'None'}');
     }
   }
 
   /// Queries the API for [symbol], and returns the corresponding stock.
-  Future<Stock> fetchStock(String symbol) async {
-    final response = await http.get('${_apiEndpoint}stock');
-    _checkResponse(response);
+  // Future<Stock> fetchStock(String symbol) async {
+  //   final response = await http.get('${_apiEndpoint}stock');
+  //   _checkResponse(response);
 
-    return Stock.fromJson(jsonDecode(response.body));
-  }
+  //   return Stock.fromJson(jsonDecode(response.body));
+  // }
 
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
   Future<List<Stock>> fetchPortfolio(String token, String email) async {
     final List<Stock> stocks = [];
-    final response = await http.post('${_apiEndpoint}portfolio',
-        body: jsonEncode({'token': token, 'email': email}),
-        headers: {'Content-Type': 'application/json'});
+    final response = await get('${_apiEndpoint}stocks',
+        body: jsonEncode({'token': token, 'email': email}));
+
     _checkResponse(response);
 
     final List body = jsonDecode(response.body);
+
     if (body.length == 0) {
       return [];
     } else if (body.length == 1) {
@@ -73,13 +211,17 @@ class API {
 
   Future<Map<DateTime, double>> fetchBalanceHistory(
       DateTime lastFetched, String token, String email) async {
-    final response = await http.post('${_apiEndpoint}getMissedBalanceHistory',
-        body: jsonEncode({
+    final response = await get(
+      '${_apiEndpoint}balanceHistory',
+      body: jsonEncode(
+        {
           'token': token,
           'email': email,
           'lastBalance': lastFetched.toIso8601String(),
-        }),
-        headers: {'Content-Type': 'application/json'});
+        },
+      ),
+    );
+
     _checkResponse(response);
     final Map body = jsonDecode(response.body);
 
@@ -93,66 +235,83 @@ class API {
 
   /// Fetches the user's latest balance from the server.
   Future<double> fetchBalance(String token, String email) async {
-    final response = await http.post('${_apiEndpoint}balance',
-        body: jsonEncode({'token': token, 'email': email}),
-        headers: {'Content-Type': 'application/json'});
+    final response = await get(
+      '${_apiEndpoint}me',
+      body: jsonEncode({'token': token, 'email': email}),
+    );
     _checkResponse(response);
-    final balance = double.parse(response.body);
+
+
+    final balance = jsonDecode(response.body)['balance'];
 
     return balance;
   }
 
-  Future sellStock(
+  Future<List<Stock>> sellStock(
       String symbol, int quantity, String token, String email) async {
-    final response = await http.post('${_apiEndpoint}sellStock',
+    final response = await delete('${_apiEndpoint}stocks',
         body: jsonEncode({
           'token': token,
           'email': email,
           'symbol': symbol,
           'quantity': quantity
-        }),
-        headers: {'Content-Type': 'application/json'});
+        }),);
 
     _checkResponse(response);
-  }
 
-  Future buyStock(
-      String symbol, int quantity, String token, String email) async {
-    final response = await http.post(
-      '${_apiEndpoint}buyStock',
-      body: jsonEncode({
-        'token': token,
-        'email': email,
-        'symbol': symbol,
-        'quantity': quantity
-      }),
-      headers: {'Content-Type': 'application/json'}
-    );
+    final body = jsonDecode(response.body);
+    final parsedStocks = [];
 
-    _checkResponse(response);
-  }
-
-  Future<List<Stock>> topGain() async {
-    final response = await http.post('${_apiEndpoint}topGain',
-        body: jsonEncode({'token': _token}));
-    _checkResponse(response);
-    List<Stock> stocks = [];
-    List body = jsonDecode(response.body);
-    for (var stock in body) {
-      stocks.add(Stock.fromJson(stock));
+    for (final stock in body) {
+      parsedStocks.add(Stock.fromJson(stock));
     }
-    return stocks;
+
+    return parsedStocks;
   }
 
-  Future<List> trending() async {
-    final response = await http.post('${_apiEndpoint}trending',
-        body: jsonEncode({'token': _token}));
+  Future<List<Stock>> buyStock(
+      String symbol, int quantity, String token, String email) async {
+    final response = await put('${_apiEndpoint}buyStock',
+        body: jsonEncode({
+          'token': token,
+          'email': email,
+          'symbol': symbol,
+          'quantity': quantity
+        }));
+
     _checkResponse(response);
-    return jsonDecode(response.body);
+
+    final body = jsonDecode(response.body);
+    final parsedStocks = [];
+
+    for (final stock in body) {
+      parsedStocks.add(Stock.fromJson(stock));
+    }
+
+    return parsedStocks;
   }
+
+  // Future<List<Stock>> topGain() async {
+  //   final response = await http.post('${_apiEndpoint}topGain',
+  //       body: jsonEncode({'token': _token}));
+  //   _checkResponse(response);
+  //   List<Stock> stocks = [];
+  //   List body = jsonDecode(response.body);
+  //   for (var stock in body) {
+  //     stocks.add(Stock.fromJson(stock));
+  //   }
+  //   return stocks;
+  // }
+
+  // Future<List> trending() async {
+  //   final response = await http.post('${_apiEndpoint}trending',
+  //       body: jsonEncode({'token': _token}));
+  //   _checkResponse(response);
+  //   return jsonDecode(response.body);
+  // }
 
   Future<List> search(String term) async {
-    final response = await http.post('${_apiEndpoint}search',
+    final response = await get('${_apiEndpoint}search',
         body: jsonEncode({'token': _token, 'term': term}));
 
     _checkResponse(response);
@@ -161,14 +320,14 @@ class API {
   }
 
   Future<User> signIn(String email, String password) async {
-    final response = await http.post('${_apiEndpoint}login',
+    final response = await get('${_apiEndpoint}me',
         body: jsonEncode(
           {
             'email': email,
             'password': password,
           },
-        ),
-        headers: {'Content-Type': 'application/json'});
+        ));
+
     _checkResponse(response);
 
     final body = jsonDecode(response.body);
@@ -187,22 +346,10 @@ class API {
   }
 
   Future<User> signUp(String email, String password, String username) async {
-    print('[INFO] Sending request...');
-    final requestStart = DateTime.now();
-    final response = await http.post('${_apiEndpoint}signUp',
+    final response = await post('${_apiEndpoint}me',
         body: jsonEncode(
           {'email': email, 'password': password, 'username': username},
-        ),
-        headers: {'Content-Type': 'application/json'});
-    final requestEnd = DateTime.now();
-    final diff = requestEnd.difference(requestStart);
-
-    if (diff.inSeconds >= 2) {
-      print(
-          '[WARNING] Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
-    } else {
-      print('[INFO] Response recieved, took ${diff.inMilliseconds}ms!');
-    }
+        ));
     _checkResponse(response);
 
     final body = jsonDecode(response.body);

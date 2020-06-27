@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Our source of ads
+  firebase_admob: ^0.9.3+2
 
   # Firebase notifications for watched stocks
   firebase_messaging: ^6.0.16
