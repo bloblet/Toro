@@ -50,7 +50,7 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
                   child: Hero(
                     tag: 'logo',
                     child: Container(
-                      child: Image.asset('images/temp_logo.png'),
+                      child: Image.asset('assets/images/temp_logo.png'),
                       height: 120.0,
                     ),
                   ),

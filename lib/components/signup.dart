@@ -35,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   tag: 'logo',
                   child: Container(
                     height: 200.0,
-                    child: Image.asset('images/temp_logo.png'),
+                    child: Image.asset('assets/images/temp_logo.png'),
                   ),
                 ),
               ),
