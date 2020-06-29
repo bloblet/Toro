@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Our source of ads
-  admob_flutter: ^0.3.4
+  # admob_flutter: ^0.3.4
 
   # ID gen
   device_info: ^0.4.2+4
