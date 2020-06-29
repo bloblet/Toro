@@ -56,9 +56,9 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 Text(
-                  'StockSim',
+                  'Stockl',
                   style: TextStyle(
-                    fontSize: 50,
+                    fontSize: 70,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
