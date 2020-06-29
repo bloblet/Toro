@@ -11,10 +11,9 @@ dependencies:
     sdk: flutter
   # Our source of ads
   # admob_flutter: ^0.3.4
-  firebase_admob: ^0.9.3+2
+  #firebase_admob: ^0.9.3+2
   #need firebase_core for admob
   firebase_core: ^0.4.5
-  firebase_core_web: ^0.1.1+2
   # ID gen
   device_info: ^0.4.2+4
 
