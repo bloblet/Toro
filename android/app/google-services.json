@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "436125096257",
+    "firebase_url": "https://dartmarkets-fe9d6.firebaseio.com",
+    "project_id": "dartmarkets-fe9d6",
+    "storage_bucket": "dartmarkets-fe9d6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436125096257:android:7ee19da9ae486326eba9c0",
+        "android_client_info": {
+          "package_name": "com.bloblet.stockle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436125096257-eci1tiel6fvhp6vs3pe7tbhv54a6rr26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEPjSBQVYxSKBhRmSGDvRYy3N5IWqSeAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "436125096257-eci1tiel6fvhp6vs3pe7tbhv54a6rr26.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
