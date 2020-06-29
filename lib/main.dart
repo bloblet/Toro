@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import 'components/login.dart';
 import 'components/signup.dart';
@@ -20,6 +20,7 @@ void main() {
   runApp(MyApp());
 }
 
+// TODO move to its own file
 class AppInitializer {
   static AppInitializer _cache = AppInitializer._();
   AppInitializer._();
@@ -31,7 +32,6 @@ class AppInitializer {
   static bool hasInitialized = false;
   static bool startedTimer = false;
   static Timer timer;
-  final firebaseMessaging = FirebaseMessaging();
 
   void startTimer() {
     if (!startedTimer) {
@@ -47,13 +47,21 @@ class AppInitializer {
     }
   }
 
-  Future<Box<User>> init() async {
+  Future<Box<User>> init(BuildContext context) async {
     if (!hasInitialized) {
-      firebaseMessaging.configure(
-      onBackgroundMessage: (Map<String, dynamic> message) async {
-        // TODO IMPLEMENT MESSAGE HANDLER
-      },
-    );
+      OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+      OneSignal.shared.init("f88e9b0e-3c0b-4706-a032-080871499e12");
+      OneSignal.shared
+          .setInFocusDisplayType(OSNotificationDisplayType.notification);
+      OneSignal.shared
+          .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+            final symbol = result.notification.payload.additionalData['symbol'];
+          });
+      // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+      // await OneSignal.shared
+      //     .promptUserForPushNotificationPermission(fallbackToSettings: true);
+
       print('Initializing hive');
       await Hive.initFlutter();
       Hive.registerAdapter(UserAdapter());
@@ -80,8 +88,12 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           accentColor: Color.fromRGBO(175, 76, 171, 1),
           primaryTextTheme: TextTheme(),
-          scaffoldBackgroundColor: Colors.white),
+          scaffoldBackgroundColor: Colors.white,
+          cardTheme: CardTheme(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)))),
       routes: {
+        // TODO use static methods on widgets for routes
         'summary': (_) => Summary(),
         'portfolio': (_) => PortfolioV2(),
         'displayStock': (_) => StockInfo(),
@@ -91,7 +103,7 @@ class MyApp extends StatelessWidget {
         'trade': (_) => TradeScreen(),
       },
       home: FutureBuilder<Box<User>>(
-        future: initializer.init(),
+        future: initializer.init(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data.get('me') == null) {

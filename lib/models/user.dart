@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:pedantic/pedantic.dart';
 import '../bloc/API.dart';
 import '../main.dart';
-import 'datahive.dart';
 import 'stock.dart';
 
 part 'user.g.dart';
@@ -71,9 +70,9 @@ class User extends HiveObject {
   }
 
   double get change {
-    final now = DateTime.now();
-    final history = balanceHistory.keys.where((element) => now.day == element.month && now.month == element.month && now.year == element.year);
-    final open = balanceHistory[history];
+    // final now = DateTime.now();
+    // final history = balanceHistory.keys.where((element) => now.day == element.month && now.month == element.month && now.year == element.year);
+    // final open = balanceHistory[history];
     return 1;
   }
 

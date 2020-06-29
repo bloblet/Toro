@@ -3,10 +3,10 @@ import 'package:fl_animated_linechart/fl_animated_linechart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../models/user.dart';
 import 'tabScaffold.dart';
 import 'zoomScaffold.dart';
-import 'package:fl_animated_linechart/main.dart';
 
 class Summary extends StatelessWidget {
   @override

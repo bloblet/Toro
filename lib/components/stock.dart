@@ -120,13 +120,12 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
-        pageBuilder: (context, animation1, animation2) {});
+        pageBuilder: (context, animation1, animation2) => Container());
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
 
     return Card(
       color: (widget.stock.changesPercentage >= 0)

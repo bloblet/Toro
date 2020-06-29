@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+import '../bloc/API.dart';
+
 part 'stock.g.dart';
 
 @HiveType(typeId: 1)
@@ -48,4 +50,6 @@ class Stock {
   }
 
   Stock();
+
+  static Future<Stock> get(String symbol) async => API().fetchStock(symbol);
 }

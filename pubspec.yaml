@@ -4,16 +4,19 @@ description: A fun, modern looking stock simulator app
 version: 0.9.0
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   # Our source of ads
-  firebase_admob: ^0.9.3+2
+  admob_flutter: ^0.3.4
 
-  # Firebase notifications for watched stocks
-  firebase_messaging: ^6.0.16
+  # ID gen
+  device_info: ^0.4.2+4
+
+  # Notifications for watched stocks
+  onesignal_flutter: ^2.0.0
 
   # HTTP plugin for talking to the API
   http: ^0.12.0+4
@@ -57,7 +60,7 @@ dev-dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - assets/images
+  - assets/images/temp_logo.png
 
   fonts:
     - family: Raleway

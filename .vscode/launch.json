@@ -8,7 +8,7 @@
             "name": "StockSim",
             "request": "launch",
             "type": "dart",
-            "args": ["--fast-start"]
+            "args": ["--fast-start", "--dart-define=token=TwrYG22xNBLBIm2EGYBGirlV7BXRaOihJpZGxO0-q8ANfChCQr1VU-mzwoetilb_vYiurVSHgLubGU-Yk4CMWZZo2hHMI85OiauHYE53_h0QotmVF7A-eDgB7hTt-zjQDq18Tgp4bngbNTJ8u6jcNmkzrFVFWCOLqYobz-IpEjk"]
         }
     ]
 }

@@ -1,10 +1,181 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
 import '../models/stock.dart';
+
+const _token = 'T'
+    'w'
+    'r'
+    'Y'
+    'G'
+    '2'
+    '2'
+    'x'
+    'N'
+    'B'
+    'L'
+    'B'
+    'I'
+    'm'
+    '2'
+    'E'
+    'G'
+    'Y'
+    'B'
+    'G'
+    'i'
+    'r'
+    'l'
+    'V'
+    '7'
+    'B'
+    'X'
+    'R'
+    'a'
+    'O'
+    'i'
+    'h'
+    'J'
+    'p'
+    'Z'
+    'G'
+    'x'
+    'O'
+    '0'
+    '-'
+    'q'
+    '8'
+    'A'
+    'N'
+    'f'
+    'C'
+    'h'
+    'C'
+    'Q'
+    'r'
+    '1'
+    'V'
+    'U'
+    '-'
+    'm'
+    'z'
+    'w'
+    'o'
+    'e'
+    't'
+    'i'
+    'l'
+    'b'
+    '_'
+    'v'
+    'Y'
+    'i'
+    'u'
+    'r'
+    'V'
+    'S'
+    'H'
+    'g'
+    'L'
+    'u'
+    'b'
+    'G'
+    'U'
+    '-'
+    'Y'
+    'k'
+    '4'
+    'C'
+    'M'
+    'W'
+    'Z'
+    'Z'
+    'o'
+    '2'
+    'h'
+    'H'
+    'M'
+    'I'
+    '8'
+    '5'
+    'O'
+    'i'
+    'a'
+    'u'
+    'H'
+    'Y'
+    'E'
+    '5'
+    '3'
+    '_'
+    'h'
+    '0'
+    'Q'
+    'o'
+    't'
+    'm'
+    'V'
+    'F'
+    '7'
+    'A'
+    '-'
+    'e'
+    'D'
+    'g'
+    'B'
+    '7'
+    'h'
+    'T'
+    't'
+    '-'
+    'z'
+    'j'
+    'Q'
+    'D'
+    'q'
+    '1'
+    '8'
+    'T'
+    'g'
+    'p'
+    '4'
+    'b'
+    'n'
+    'g'
+    'b'
+    'N'
+    'T'
+    'J'
+    '8'
+    'u'
+    '6'
+    'j'
+    'c'
+    'N'
+    'm'
+    'k'
+    'z'
+    'r'
+    'F'
+    'V'
+    'F'
+    'W'
+    'C'
+    'O'
+    'L'
+    'q'
+    'Y'
+    'o'
+    'b'
+    'z'
+    '-'
+    'I'
+    'p'
+    'E'
+    'j'
+    'k';
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -15,12 +186,7 @@ class API {
   static API _cache = API._();
 
   /// Current location of the stocks API
-  String _apiEndpoint = 'http://pn.bloblet.com:9876/';
-
-  // Token to authenticate [userID] for.
-  String _token = "kS+RLoGUsPw5STYBFmzY0Q8Zz0pIgh5YIGByNZ0VYEw=";
-
-  String email = 'fpiesquared@gmail.com';
+  String _apiEndpoint = 'https://pn.bloblet.com/';
 
   static const debug = true;
 
@@ -41,6 +207,7 @@ class API {
     final request = http.Request('GET', uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
+    request.headers['Token'] = _token;
 
     final start = DateTime.now();
     final _res = await request.send();
@@ -75,6 +242,7 @@ class API {
     final request = http.Request('PUT', uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
+    request.headers['Token'] = _token;
 
     final start = DateTime.now();
     final _res = await request.send();
@@ -109,6 +277,7 @@ class API {
     final request = http.Request('DELETE', uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
+    request.headers['Token'] = _token;
 
     final start = DateTime.now();
     final _res = await request.send();
@@ -143,6 +312,42 @@ class API {
     final request = http.Request('POST', uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
+    request.headers['Token'] = _token;
+
+    final start = DateTime.now();
+    final _res = await request.send();
+
+    if (debug && _res.statusCode > 200) {
+      print(
+          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
+      print('[WARNING] > ${uri.path} Request body was $body');
+    }
+
+    final res = await http.Response.fromStream(_res);
+    final end = DateTime.now();
+
+    final diff = end.difference(start);
+    if (debug) {
+      if (diff.inSeconds >= 2) {
+        print(
+            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+      } else {
+        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+      }
+    }
+
+    return res;
+  }
+
+  Future<http.Response> patch(String url, {String body}) async {
+    if (debug) {
+      print('[INFO] Sending PATCH request to $url...');
+    }
+    final uri = Uri.parse(url);
+    final request = http.Request('PATCH', uri);
+    request.body = body;
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['Token'] = _token;
 
     final start = DateTime.now();
     final _res = await request.send();
@@ -177,12 +382,13 @@ class API {
   }
 
   /// Queries the API for [symbol], and returns the corresponding stock.
-  // Future<Stock> fetchStock(String symbol) async {
-  //   final response = await http.get('${_apiEndpoint}stock');
-  //   _checkResponse(response);
+  Future<Stock> fetchStock(String symbol) async {
+    final response = await patch('${_apiEndpoint}stocks',
+        body: jsonEncode({'symbol': symbol}));
+    _checkResponse(response);
 
-  //   return Stock.fromJson(jsonDecode(response.body));
-  // }
+    return Stock.fromJson(jsonDecode(response.body));
+  }
 
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
   Future<List<Stock>> fetchPortfolio(String token, String email) async {
@@ -241,7 +447,6 @@ class API {
     );
     _checkResponse(response);
 
-
     final balance = jsonDecode(response.body)['balance'];
 
     return balance;
@@ -249,13 +454,15 @@ class API {
 
   Future<List<Stock>> sellStock(
       String symbol, int quantity, String token, String email) async {
-    final response = await delete('${_apiEndpoint}stocks',
-        body: jsonEncode({
-          'token': token,
-          'email': email,
-          'symbol': symbol,
-          'quantity': quantity
-        }),);
+    final response = await delete(
+      '${_apiEndpoint}stocks',
+      body: jsonEncode({
+        'token': token,
+        'email': email,
+        'symbol': symbol,
+        'quantity': quantity
+      }),
+    );
 
     _checkResponse(response);
 
