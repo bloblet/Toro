@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 import 'components/login.dart';
 import 'components/signup.dart';
@@ -49,6 +50,8 @@ class AppInitializer {
 
   Future<Box<User>> init(BuildContext context) async {
     if (!hasInitialized) {
+      FirebaseAdMob.instance
+          .initialize(appId: "ca-app-pub-6084013412591482~5356667331");
       OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
 
       OneSignal.shared.init("f88e9b0e-3c0b-4706-a032-080871499e12");
@@ -56,8 +59,8 @@ class AppInitializer {
           .setInFocusDisplayType(OSNotificationDisplayType.notification);
       OneSignal.shared
           .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-            final symbol = result.notification.payload.additionalData['symbol'];
-          });
+        final symbol = result.notification.payload.additionalData['symbol'];
+      });
       // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
       // await OneSignal.shared
       //     .promptUserForPushNotificationPermission(fallbackToSettings: true);
