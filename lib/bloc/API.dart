@@ -260,7 +260,7 @@ class API {
           '[${res.statusCode}]: Reason: ${res.reasonPhrase ?? 'None'} Body: ${res.body ?? 'None'}');
     }
   }
-  
+
   /// Queries the API for [symbol], and returns the corresponding stock.
   Future<Stock> fetchStock(String symbol) async {
     final response =
@@ -271,10 +271,10 @@ class API {
   }
 
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
-  Future<List<Stock>> fetchPortfolio(String token, String email) async {
+  Future<List<Stock>> fetchPortfolio(String token, String id) async {
     final List<Stock> stocks = [];
     final response = await get(
-        '${_apiEndpoint}stocks', jsonEncode({'token': token, 'email': email}));
+        '${_apiEndpoint}stocks', jsonEncode({'token': token, 'id': id}));
 
     _checkResponse(response);
 
@@ -296,13 +296,13 @@ class API {
   }
 
   Future<Map<DateTime, double>> fetchBalanceHistory(
-      DateTime lastFetched, String token, String email) async {
+      DateTime lastFetched, String token, String id) async {
     final response = await get(
       '${_apiEndpoint}balanceHistory',
       jsonEncode(
         {
           'token': token,
-          'email': email,
+          'id': id,
           'lastBalance': lastFetched.toIso8601String(),
         },
       ),
@@ -320,10 +320,10 @@ class API {
   }
 
   /// Fetches the user's latest balance from the server.
-  Future<double> fetchBalance(String token, String email) async {
+  Future<double> fetchBalance(String token, String id) async {
     final response = await get(
       '${_apiEndpoint}me',
-      jsonEncode({'token': token, 'email': email}),
+      jsonEncode({'token': token, 'id': id}),
     );
     _checkResponse(response);
 
@@ -333,12 +333,12 @@ class API {
   }
 
   Future<List<Stock>> sellStock(
-      String symbol, int quantity, String token, String email) async {
+      String symbol, int quantity, String token, String id) async {
     final response = await delete(
       '${_apiEndpoint}stocks',
       jsonEncode({
         'token': token,
-        'email': email,
+        'id': id,
         'symbol': symbol,
         'quantity': quantity
       }),
@@ -357,12 +357,12 @@ class API {
   }
 
   Future<List<Stock>> buyStock(
-      String symbol, int quantity, String token, String email) async {
+      String symbol, int quantity, String token, String id) async {
     final response = await put(
         '${_apiEndpoint}buyStock',
         jsonEncode({
           'token': token,
-          'email': email,
+          'id': id,
           'symbol': symbol,
           'quantity': quantity
         }));
@@ -407,12 +407,12 @@ class API {
     return body;
   }
 
-  Future<User> signIn(String email, String password) async {
+  Future<User> signIn(String id, String password) async {
     final response = await get(
         '${_apiEndpoint}me',
         jsonEncode(
           {
-            'email': email,
+            'id': id,
             'password': password,
           },
         ));
@@ -426,7 +426,7 @@ class API {
       ..username = body['username']
       ..balance = body['balance']
       ..balanceHistory = {now: body['balance']}
-      ..email = body['email']
+      ..email = body['id']
       ..token = body['token']
       ..inventory = []
       ..lastUpdatedBalance = now
@@ -434,11 +434,11 @@ class API {
       ..lastUpdatedInventory = now;
   }
 
-  Future<User> signUp(String email, String password, String username) async {
+  Future<User> signUp(String id, String password, String username) async {
     final response = await post(
         '${_apiEndpoint}me',
         jsonEncode(
-          {'email': email, 'password': password, 'username': username},
+          {'id': id, 'password': password, 'username': username},
         ));
     _checkResponse(response);
 
@@ -448,7 +448,7 @@ class API {
     return User()
       ..balance = body['balance']
       ..balanceHistory = {now: 0}
-      ..email = body['email']
+      ..email = body['id']
       ..token = body['token']
       ..inventory = body['stocks']
       ..lastUpdatedBalance = now
