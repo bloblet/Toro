@@ -9,14 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Our source of ads
-  # admob_flutter: ^0.3.4
-  #need firebase_core for admob
+  # Admob dependency
   firebase_core: ^0.4.5
-  #the official admob plugin
+
+  # Our source of ads
   firebase_admob: ^0.9.3+2
   # ID gen
   device_info: ^0.4.2+4
+
+  # Crash reporting
+  # firebase_crashlytics: ^0.1.3+3
 
   # Notifications for watched stocks
   onesignal_flutter: ^2.0.0

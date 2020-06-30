@@ -4,178 +4,181 @@ import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
 import '../models/stock.dart';
+import '../utils.dart';
 
-const _token = 'T'
-    'w'
-    'r'
-    'Y'
-    'G'
-    '2'
-    '2'
-    'x'
-    'N'
-    'B'
-    'L'
-    'B'
-    'I'
-    'm'
-    '2'
-    'E'
-    'G'
-    'Y'
-    'B'
-    'G'
-    'i'
-    'r'
-    'l'
-    'V'
-    '7'
-    'B'
-    'X'
-    'R'
-    'a'
-    'O'
-    'i'
-    'h'
-    'J'
-    'p'
-    'Z'
-    'G'
-    'x'
-    'O'
-    '0'
-    '-'
-    'q'
-    '8'
-    'A'
-    'N'
-    'f'
-    'C'
-    'h'
-    'C'
-    'Q'
-    'r'
-    '1'
-    'V'
-    'U'
-    '-'
-    'm'
-    'z'
-    'w'
-    'o'
-    'e'
-    't'
-    'i'
-    'l'
-    'b'
-    '_'
-    'v'
-    'Y'
-    'i'
-    'u'
-    'r'
-    'V'
-    'S'
-    'H'
-    'g'
-    'L'
-    'u'
-    'b'
-    'G'
-    'U'
-    '-'
-    'Y'
-    'k'
-    '4'
-    'C'
-    'M'
-    'W'
-    'Z'
-    'Z'
-    'o'
-    '2'
-    'h'
-    'H'
-    'M'
-    'I'
-    '8'
-    '5'
-    'O'
-    'i'
-    'a'
-    'u'
-    'H'
-    'Y'
-    'E'
-    '5'
-    '3'
-    '_'
-    'h'
-    '0'
-    'Q'
-    'o'
-    't'
-    'm'
-    'V'
-    'F'
-    '7'
-    'A'
-    '-'
-    'e'
-    'D'
-    'g'
-    'B'
-    '7'
-    'h'
-    'T'
-    't'
-    '-'
-    'z'
-    'j'
-    'Q'
-    'D'
-    'q'
-    '1'
-    '8'
-    'T'
-    'g'
-    'p'
-    '4'
-    'b'
-    'n'
-    'g'
-    'b'
-    'N'
-    'T'
-    'J'
-    '8'
-    'u'
-    '6'
-    'j'
-    'c'
-    'N'
-    'm'
-    'k'
-    'z'
-    'r'
-    'F'
-    'V'
-    'F'
-    'W'
-    'C'
-    'O'
-    'L'
-    'q'
-    'Y'
-    'o'
-    'b'
-    'z'
-    '-'
-    'I'
-    'p'
-    'E'
-    'j'
-    'k';
+final _a = String.fromCharCodes([
+  0x54,
+  0x77,
+  0x72,
+  0x59,
+  0x47,
+  0x32,
+  0x32,
+  0x78,
+  0x4e,
+  0x42,
+  0x4c,
+  0x42,
+  0x49,
+  0x6d,
+  0x32,
+  0x45,
+  0x47,
+  0x59,
+  0x42,
+  0x47,
+  0x69,
+  0x72,
+  0x6c,
+  0x56,
+  0x37,
+  0x42,
+  0x58,
+  0x52,
+  0x61,
+  0x4f,
+  0x69,
+  0x68,
+  0x4a,
+  0x70,
+  0x5a,
+  0x47,
+  0x78,
+  0x4f,
+  0x30,
+  0x2d,
+  0x71,
+  0x38,
+  0x41,
+  0x4e,
+  0x66,
+  0x43,
+  0x68,
+  0x43,
+  0x51,
+  0x72,
+  0x31,
+  0x56,
+  0x55,
+  0x2d,
+  0x6d,
+  0x7a,
+  0x77,
+  0x6f,
+  0x65,
+  0x74,
+  0x69,
+  0x6c,
+  0x62,
+  0x5f,
+  0x76,
+  0x59,
+  0x69,
+  0x75,
+  0x72,
+  0x56,
+  0x53,
+  0x48,
+  0x67,
+  0x4c,
+  0x75,
+  0x62,
+  0x47,
+  0x55,
+  0x2d,
+  0x59,
+  0x6b,
+  0x34,
+  0x43,
+  0x4d,
+  0x57,
+  0x5a,
+  0x5a,
+  0x6f,
+  0x32,
+  0x68,
+  0x48,
+  0x4d,
+  0x49,
+  0x38,
+  0x35,
+  0x4f,
+  0x69,
+  0x61,
+  0x75,
+  0x48,
+  0x59,
+  0x45,
+  0x35,
+  0x33,
+  0x5f,
+  0x68,
+  0x30,
+  0x51,
+  0x6f,
+  0x74,
+  0x6d,
+  0x56,
+  0x46,
+  0x37,
+  0x41,
+  0x2d,
+  0x65,
+  0x44,
+  0x67,
+  0x42,
+  0x37,
+  0x68,
+  0x54,
+  0x74,
+  0x2d,
+  0x7a,
+  0x6a,
+  0x51,
+  0x44,
+  0x71,
+  0x31,
+  0x38,
+  0x54,
+  0x67,
+  0x70,
+  0x34,
+  0x62,
+  0x6e,
+  0x67,
+  0x62,
+  0x4e,
+  0x54,
+  0x4a,
+  0x38,
+  0x75,
+  0x36,
+  0x6a,
+  0x63,
+  0x4e,
+  0x6d,
+  0x6b,
+  0x7a,
+  0x72,
+  0x46,
+  0x56,
+  0x46,
+  0x57,
+  0x43,
+  0x4f,
+  0x4c,
+  0x71,
+  0x59,
+  0x6f,
+  0x62,
+  0x7a,
+  0x2d,
+  0x49,
+  0x70,
+  0x45,
+  0x6a,
+  0x6b
+]);
 
 /// Factory API class, no need to store it anywhere.
 /// For now, this is all a dummy API, uncomment the lines prefixed by
@@ -198,181 +201,58 @@ class API {
   /// This is a constructor, so we can initialize our class in the static member [_cache]
   /// This should only run once, at the start of our app.
   API._();
-
-  Future<http.Response> get(String url, {String body}) async {
-    if (debug) {
-      print('[INFO] Sending GET request to $url...');
-    }
+  Future<http.Response> _request(String url, String method,
+      [String body]) async {
+    log('Sending $method request to $url...');
     final uri = Uri.parse(url);
-    final request = http.Request('GET', uri);
+    final request = http.Request(method, uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _token;
+    request.headers['Token'] = _a;
 
     final start = DateTime.now();
     final _res = await request.send();
 
-    if (debug && _res.statusCode > 200) {
-      print(
-          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
-      print('[WARNING] > ${uri.path} Request body was $body');
+    if (_res.statusCode > 201) {
+      log('[${uri.path}] Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})',
+          type: Severity.error);
+      log('[${uri.path}] Request body was $body', type: Severity.error);
     }
 
     final res = await http.Response.fromStream(_res);
     final end = DateTime.now();
 
     final diff = end.difference(start);
-    if (debug) {
-      if (diff.inSeconds >= 2) {
-        print(
-            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
+    if (diff.inSeconds >= 2) {
+      log('[${uri.path}] Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!',
+          type: Severity.warning);
+    } else {
+      if (!(_res.statusCode > 201)) {
+        log('[${uri.path} ]Finished, took ${diff.inMilliseconds}ms!',
+            type: Severity.success);
       } else {
-        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
+        log('[${uri.path} ]Finished, took ${diff.inMilliseconds}ms, completed with status code ${_res.statusCode}',
+            type: Severity.error);
       }
     }
 
     return res;
   }
 
-  Future<http.Response> put(String url, {String body}) async {
-    if (debug) {
-      print('[INFO] Sending PUT request to $url...');
-    }
-    final uri = Uri.parse(url);
-    final request = http.Request('PUT', uri);
-    request.body = body;
-    request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _token;
+  Future<http.Response> get(String url, [String body]) =>
+      _request(url, 'GET', body);
 
-    final start = DateTime.now();
-    final _res = await request.send();
+  Future<http.Response> put(String url, [String body]) =>
+      _request(url, 'PUT', body);
 
-    if (debug && _res.statusCode > 200) {
-      print(
-          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
-      print('[WARNING] > ${uri.path} Request body was $body');
-    }
+  Future<http.Response> delete(String url, [String body]) =>
+      _request(url, 'DELETE', body);
 
-    final res = await http.Response.fromStream(_res);
-    final end = DateTime.now();
+  Future<http.Response> post(String url, [String body]) =>
+      _request(url, 'POST', body);
 
-    final diff = end.difference(start);
-    if (debug) {
-      if (diff.inSeconds >= 2) {
-        print(
-            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
-      } else {
-        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
-      }
-    }
-
-    return res;
-  }
-
-  Future<http.Response> delete(String url, {String body}) async {
-    if (debug) {
-      print('[INFO] Sending DELETE request to $url...');
-    }
-    final uri = Uri.parse(url);
-    final request = http.Request('DELETE', uri);
-    request.body = body;
-    request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _token;
-
-    final start = DateTime.now();
-    final _res = await request.send();
-
-    if (debug && _res.statusCode > 200) {
-      print(
-          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
-      print('[WARNING] > ${uri.path} Request body was $body');
-    }
-
-    final res = await http.Response.fromStream(_res);
-    final end = DateTime.now();
-
-    final diff = end.difference(start);
-    if (debug) {
-      if (diff.inSeconds >= 2) {
-        print(
-            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
-      } else {
-        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
-      }
-    }
-
-    return res;
-  }
-
-  Future<http.Response> post(String url, {String body}) async {
-    if (debug) {
-      print('[INFO] Sending POST request to $url...');
-    }
-    final uri = Uri.parse(url);
-    final request = http.Request('POST', uri);
-    request.body = body;
-    request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _token;
-
-    final start = DateTime.now();
-    final _res = await request.send();
-
-    if (debug && _res.statusCode > 200) {
-      print(
-          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
-      print('[WARNING] > ${uri.path} Request body was $body');
-    }
-
-    final res = await http.Response.fromStream(_res);
-    final end = DateTime.now();
-
-    final diff = end.difference(start);
-    if (debug) {
-      if (diff.inSeconds >= 2) {
-        print(
-            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
-      } else {
-        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
-      }
-    }
-
-    return res;
-  }
-
-  Future<http.Response> patch(String url, {String body}) async {
-    if (debug) {
-      print('[INFO] Sending PATCH request to $url...');
-    }
-    final uri = Uri.parse(url);
-    final request = http.Request('PATCH', uri);
-    request.body = body;
-    request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _token;
-
-    final start = DateTime.now();
-    final _res = await request.send();
-
-    if (debug && _res.statusCode > 200) {
-      print(
-          '[WARNING] > ${uri.path} Non 200/1 status code recieved! (${_res.statusCode}, Reason: ${_res.reasonPhrase})');
-      print('[WARNING] > ${uri.path} Request body was $body');
-    }
-
-    final res = await http.Response.fromStream(_res);
-    final end = DateTime.now();
-
-    final diff = end.difference(start);
-    if (debug) {
-      if (diff.inSeconds >= 2) {
-        print(
-            '[WARNING] > ${uri.path} Request resolution took an unexpectedly long time (${diff.inMilliseconds}ms)!');
-      } else {
-        print('[INFO] > ${uri.path} Finished, took ${diff.inMilliseconds}ms!');
-      }
-    }
-
-    return res;
-  }
+  Future<http.Response> patch(String url, [String body]) =>
+      _request(url, 'PATCH', body);
 
   void _checkResponse(http.Response res) {
     if (res.statusCode != 200 || res.statusCode != 201) {
@@ -380,11 +260,11 @@ class API {
           '[${res.statusCode}]: Reason: ${res.reasonPhrase ?? 'None'} Body: ${res.body ?? 'None'}');
     }
   }
-
+  
   /// Queries the API for [symbol], and returns the corresponding stock.
   Future<Stock> fetchStock(String symbol) async {
-    final response = await patch('${_apiEndpoint}stocks',
-        body: jsonEncode({'symbol': symbol}));
+    final response =
+        await patch('${_apiEndpoint}stocks', jsonEncode({'symbol': symbol}));
     _checkResponse(response);
 
     return Stock.fromJson(jsonDecode(response.body));
@@ -393,8 +273,8 @@ class API {
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
   Future<List<Stock>> fetchPortfolio(String token, String email) async {
     final List<Stock> stocks = [];
-    final response = await get('${_apiEndpoint}stocks',
-        body: jsonEncode({'token': token, 'email': email}));
+    final response = await get(
+        '${_apiEndpoint}stocks', jsonEncode({'token': token, 'email': email}));
 
     _checkResponse(response);
 
@@ -419,7 +299,7 @@ class API {
       DateTime lastFetched, String token, String email) async {
     final response = await get(
       '${_apiEndpoint}balanceHistory',
-      body: jsonEncode(
+      jsonEncode(
         {
           'token': token,
           'email': email,
@@ -443,7 +323,7 @@ class API {
   Future<double> fetchBalance(String token, String email) async {
     final response = await get(
       '${_apiEndpoint}me',
-      body: jsonEncode({'token': token, 'email': email}),
+      jsonEncode({'token': token, 'email': email}),
     );
     _checkResponse(response);
 
@@ -456,7 +336,7 @@ class API {
       String symbol, int quantity, String token, String email) async {
     final response = await delete(
       '${_apiEndpoint}stocks',
-      body: jsonEncode({
+      jsonEncode({
         'token': token,
         'email': email,
         'symbol': symbol,
@@ -478,8 +358,9 @@ class API {
 
   Future<List<Stock>> buyStock(
       String symbol, int quantity, String token, String email) async {
-    final response = await put('${_apiEndpoint}buyStock',
-        body: jsonEncode({
+    final response = await put(
+        '${_apiEndpoint}buyStock',
+        jsonEncode({
           'token': token,
           'email': email,
           'symbol': symbol,
@@ -518,8 +399,8 @@ class API {
   // }
 
   Future<List> search(String term) async {
-    final response = await get('${_apiEndpoint}search',
-        body: jsonEncode({'token': _token, 'term': term}));
+    final response = await get(
+        '${_apiEndpoint}search', jsonEncode({'term': term}));
 
     _checkResponse(response);
     final body = jsonDecode(response.body);
@@ -527,8 +408,9 @@ class API {
   }
 
   Future<User> signIn(String email, String password) async {
-    final response = await get('${_apiEndpoint}me',
-        body: jsonEncode(
+    final response = await get(
+        '${_apiEndpoint}me',
+        jsonEncode(
           {
             'email': email,
             'password': password,
@@ -553,8 +435,9 @@ class API {
   }
 
   Future<User> signUp(String email, String password, String username) async {
-    final response = await post('${_apiEndpoint}me',
-        body: jsonEncode(
+    final response = await post(
+        '${_apiEndpoint}me',
+        jsonEncode(
           {'email': email, 'password': password, 'username': username},
         ));
     _checkResponse(response);

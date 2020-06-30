@@ -5,6 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:device_info/device_info.dart';
 
 import 'components/login.dart';
 import 'components/signup.dart';
@@ -16,8 +18,12 @@ import 'components/summary.dart';
 
 import 'models/stock.dart';
 import 'models/user.dart';
-
+import 'utils.dart';
 void main() {
+  // Crashlytics.instance.enableInDevMode = true;
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  // FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(MyApp());
 }
 
@@ -37,9 +43,9 @@ class AppInitializer {
   void startTimer() {
     if (!startedTimer) {
       User user = me.get('me');
-      print('Starting timer...');
+      log('Starting timer');
       timer = Timer.periodic(Duration(minutes: 1), (_) {
-        print('Updating');
+        log('Updating');
         user.getMissedBalanceHistory();
         user.updateInventory(force: true);
         user.updateBalance(force: true);
@@ -50,30 +56,60 @@ class AppInitializer {
 
   Future<Box<User>> init(BuildContext context) async {
     if (!hasInitialized) {
-      FirebaseAdMob.instance
-          .initialize(appId: "ca-app-pub-6084013412591482~5356667331");
-      OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+      final id = await DeviceInfoPlugin().androidInfo;
 
-      OneSignal.shared.init("f88e9b0e-3c0b-4706-a032-080871499e12");
-      OneSignal.shared
-          .setInFocusDisplayType(OSNotificationDisplayType.notification);
-      OneSignal.shared
-          .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      log('ID is ${id.androidId}');
+
+      final start = DateTime.now();
+      log('Starting initialization');
+      FirebaseAdMob.instance
+          .initialize(appId: "ca-app-pub-6084013412591482~5356667331")
+          .then(
+              (v) => log('Firebase done... ${msDiff(DateTime.now(), start)}ms'));
+
+      final partsOfOneSignal = [];
+
+      OneSignal.shared.setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+        // TODO
         final symbol = result.notification.payload.additionalData['symbol'];
       });
-      // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
-      // await OneSignal.shared
-      //     .promptUserForPushNotificationPermission(fallbackToSettings: true);
 
-      print('Initializing hive');
+      OneSignal.shared
+          .setLogLevel(OSLogLevel.fatal, OSLogLevel.none)
+          .then((value) {
+        partsOfOneSignal.add(true);
+        if (partsOfOneSignal.length == 3) {
+          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
+        }
+      });
+
+      OneSignal.shared
+          .init("f88e9b0e-3c0b-4706-a032-080871499e12")
+          .then((value) {
+        partsOfOneSignal.add(true);
+        if (partsOfOneSignal.length == 3) {
+          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
+        }
+      });
+      OneSignal.shared
+          .setInFocusDisplayType(OSNotificationDisplayType.notification)
+          .then((value) {
+        partsOfOneSignal.add(true);
+        if (partsOfOneSignal.length == 3) {
+          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
+        }
+      });
+
       await Hive.initFlutter();
       Hive.registerAdapter(UserAdapter());
       Hive.registerAdapter(StockAdapter());
-      // If you need to test logging in, uncomment \/
+      // If you need to test logging in, uncomment the next two lines
       await Hive.deleteBoxFromDisk('me');
+      log('Deleted me box', type: Severity.warning);
+
       me = await Hive.openBox<User>('me');
+      log('Hive done... ${msDiff(DateTime.now(), start)}ms');
       hasInitialized = true;
-      await Future.delayed(Duration(seconds: 1));
     }
     return me;
   }
@@ -105,18 +141,22 @@ class MyApp extends StatelessWidget {
         'signupScreen': (_) => SignUpScreen(),
         'trade': (_) => TradeScreen(),
       },
+      // TODO Pack into a page
       home: FutureBuilder<Box<User>>(
         future: initializer.init(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data.get('me') == null) {
+              log('No user stored, going to login...');
               return Welcome();
             } else {
+              log('Found user!');
               User me = snapshot.data.get('me');
-
+              log('Updating info');
               me.getMissedBalanceHistory();
               me.updateInventory();
               me.updateBalance();
+
               AppInitializer().startTimer();
 
               return Summary();
