@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:device_info/device_info.dart';
 
@@ -64,12 +65,15 @@ class AppInitializer {
       log('Starting initialization');
       FirebaseAdMob.instance
           .initialize(appId: "ca-app-pub-6084013412591482~5356667331")
-          .then(
-              (v) => log('Firebase done... ${msDiff(DateTime.now(), start)}ms'));
+          .then((v) =>
+              log('Firebase done... ${msDiff(DateTime.now(), start)}ms'));
+
+      final RemoteConfig remoteConfig = await RemoteConfig.instance;
 
       final partsOfOneSignal = [];
 
-      OneSignal.shared.setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      OneSignal.shared
+          .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
         // TODO
         final symbol = result.notification.payload.additionalData['symbol'];
       });
