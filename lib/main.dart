@@ -11,7 +11,6 @@ import 'package:device_info/device_info.dart';
 import 'components/login.dart';
 import 'components/signup.dart';
 import 'components/trade.dart';
-import 'components/welcome.dart';
 import 'components/portfoliov2.dart';
 import 'components/stockInfo.dart';
 import 'components/summary.dart';
@@ -19,6 +18,7 @@ import 'components/summary.dart';
 import 'models/stock.dart';
 import 'models/user.dart';
 import 'utils.dart';
+
 void main() {
   // Crashlytics.instance.enableInDevMode = true;
 
@@ -104,8 +104,8 @@ class AppInitializer {
       Hive.registerAdapter(UserAdapter());
       Hive.registerAdapter(StockAdapter());
       // If you need to test logging in, uncomment the next two lines
-      await Hive.deleteBoxFromDisk('me');
-      log('Deleted me box', type: Severity.warning);
+      // await Hive.deleteBoxFromDisk('me');
+      // log('Deleted me box', type: Severity.warning);
 
       me = await Hive.openBox<User>('me');
       log('Hive done... ${msDiff(DateTime.now(), start)}ms');
@@ -136,7 +136,6 @@ class MyApp extends StatelessWidget {
         'summary': (_) => Summary(),
         'portfolio': (_) => PortfolioV2(),
         'displayStock': (_) => StockInfo(),
-        'login': (_) => Welcome(),
         'loginScreen': (_) => LoginScreen(),
         'signupScreen': (_) => SignUpScreen(),
         'trade': (_) => TradeScreen(),
@@ -148,7 +147,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data.get('me') == null) {
               log('No user stored, going to login...');
-              return Welcome();
+              return SignUpScreen();
             } else {
               log('Found user!');
               User me = snapshot.data.get('me');

@@ -189,7 +189,7 @@ class API {
   static API _cache = API._();
 
   /// Current location of the stocks API
-  String _apiEndpoint = 'https://pn.bloblet.com/';
+  String _apiEndpoint = 'http://40.114.0.32/';
 
   static const debug = true;
 
@@ -202,14 +202,14 @@ class API {
   /// This should only run once, at the start of our app.
   API._();
   Future<http.Response> _request(String url, String method,
-      [String body]) async {
+      {Map<String, String> headers, String body}) async {
     log('Sending $method request to $url...');
     final uri = Uri.parse(url);
     final request = http.Request(method, uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
-    request.headers['Token'] = _a;
-
+    request.headers['Key'] = '';
+    request.headers.addAll(headers??{});
     final start = DateTime.now();
     final _res = await request.send();
 
@@ -239,23 +239,24 @@ class API {
     return res;
   }
 
-  Future<http.Response> get(String url, [String body]) =>
-      _request(url, 'GET', body);
+  Future<http.Response> post(String url,
+          {String body, Map<String, String> headers}) =>
+      _request(url, 'POST', body: body, headers: headers);
 
-  Future<http.Response> put(String url, [String body]) =>
-      _request(url, 'PUT', body);
+  Future<http.Response> get(String url,
+          {String body, Map<String, String> headers}) =>
+      _request(url, 'GET', body: body, headers: headers);
 
-  Future<http.Response> delete(String url, [String body]) =>
-      _request(url, 'DELETE', body);
+  Future<http.Response> put(String url,
+          {String body, Map<String, String> headers}) =>
+      _request(url, 'PUT', body: body, headers: headers);
 
-  Future<http.Response> post(String url, [String body]) =>
-      _request(url, 'POST', body);
-
-  Future<http.Response> patch(String url, [String body]) =>
-      _request(url, 'PATCH', body);
+  Future<http.Response> delete(String url,
+          {String body, Map<String, String> headers}) =>
+      _request(url, 'DELETE', body: body, headers: headers);
 
   void _checkResponse(http.Response res) {
-    if (res.statusCode != 200 || res.statusCode != 201) {
+    if (res.statusCode != 200 && res.statusCode != 201) {
       throw APIError(
           '[${res.statusCode}]: Reason: ${res.reasonPhrase ?? 'None'} Body: ${res.body ?? 'None'}');
     }
@@ -263,33 +264,33 @@ class API {
 
   /// Queries the API for [symbol], and returns the corresponding stock.
   Future<Stock> fetchStock(String symbol) async {
-    final response =
-        await patch('${_apiEndpoint}stocks', jsonEncode({'symbol': symbol}));
+    final response = await get('${_apiEndpoint}stocks',
+        body: jsonEncode({'symbol': symbol}));
     _checkResponse(response);
 
     return Stock.fromJson(jsonDecode(response.body));
   }
 
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
-  Future<List<Stock>> fetchPortfolio(String token, String id) async {
-    final List<Stock> stocks = [];
-    final response = await get(
-        '${_apiEndpoint}stocks', jsonEncode({'token': token, 'id': id}));
+  Future<Map<String, Stock>> fetchPortfolio(String token, String id) async {
+    final Map<String, Stock> stocks = {};
+    final response = await get('${_apiEndpoint}user/$id/stocks',
+        headers: {'Token': token});
 
     _checkResponse(response);
 
-    final List body = jsonDecode(response.body);
+    final Map body = jsonDecode(response.body);
 
     if (body.length == 0) {
-      return [];
+      return {};
     } else if (body.length == 1) {
-      return [Stock.fromJson(body[0])];
+      return {body.keys.first: Stock.fromJson(body.values.first)};
     }
 
-    body.sort((stock1, stock2) => stock1['symbol'].compareTo(stock2['symbol']));
+    final symbols = body.keys.toList().sort((symbol1, symbol2) => symbol1.compareTo(symbol2)) as List<String>;
 
-    for (Map<String, dynamic> stock in body) {
-      stocks.add(Stock.fromJson(stock));
+    for (String stock in symbols) {
+      stocks[stock] = (Stock.fromJson(body[stock]));
     }
 
     return stocks;
@@ -299,7 +300,7 @@ class API {
       DateTime lastFetched, String token, String id) async {
     final response = await get(
       '${_apiEndpoint}balanceHistory',
-      jsonEncode(
+      body: jsonEncode(
         {
           'token': token,
           'id': id,
@@ -321,10 +322,8 @@ class API {
 
   /// Fetches the user's latest balance from the server.
   Future<double> fetchBalance(String token, String id) async {
-    final response = await get(
-      '${_apiEndpoint}me',
-      jsonEncode({'token': token, 'id': id}),
-    );
+    final response =
+        await get('${_apiEndpoint}user/$id', headers: {'Token': token});
     _checkResponse(response);
 
     final balance = jsonDecode(response.body)['balance'];
@@ -335,13 +334,8 @@ class API {
   Future<List<Stock>> sellStock(
       String symbol, int quantity, String token, String id) async {
     final response = await delete(
-      '${_apiEndpoint}stocks',
-      jsonEncode({
-        'token': token,
-        'id': id,
-        'symbol': symbol,
-        'quantity': quantity
-      }),
+      '${_apiEndpoint}user/$id/stocks/$symbol/$quantity',
+      headers: {'Token': token},
     );
 
     _checkResponse(response);
@@ -358,14 +352,9 @@ class API {
 
   Future<List<Stock>> buyStock(
       String symbol, int quantity, String token, String id) async {
-    final response = await put(
-        '${_apiEndpoint}buyStock',
-        jsonEncode({
-          'token': token,
-          'id': id,
-          'symbol': symbol,
-          'quantity': quantity
-        }));
+    final response = await post(
+        '${_apiEndpoint}users/$id/stocks/$symbol/$quantity',
+        headers: {'Token': token});
 
     _checkResponse(response);
 
@@ -399,18 +388,18 @@ class API {
   // }
 
   Future<List> search(String term) async {
-    final response = await get(
-        '${_apiEndpoint}search', jsonEncode({'term': term}));
+    // final response =
+        // await get('${_apiEndpoint}search', jsonEncode({'term': term}));
 
-    _checkResponse(response);
-    final body = jsonDecode(response.body);
-    return body;
+    // _checkResponse(response);
+    // final body = jsonDecode(response.body);
+    // return body;
   }
 
   Future<User> signIn(String id, String password) async {
     final response = await get(
         '${_apiEndpoint}me',
-        jsonEncode(
+        body: jsonEncode(
           {
             'id': id,
             'password': password,
@@ -426,19 +415,19 @@ class API {
       ..username = body['username']
       ..balance = body['balance']
       ..balanceHistory = {now: body['balance']}
-      ..email = body['id']
+      ..id = body['id']
       ..token = body['token']
-      ..inventory = []
+      ..inventory = body['stocks']
       ..lastUpdatedBalance = now
       ..lastUpdatedBalanceHistory = now
       ..lastUpdatedInventory = now;
   }
 
-  Future<User> signUp(String id, String password, String username) async {
+  Future<User> signUp(String username) async {
     final response = await post(
-        '${_apiEndpoint}me',
-        jsonEncode(
-          {'id': id, 'password': password, 'username': username},
+        '${_apiEndpoint}users',
+        body: jsonEncode(
+          {'username': username},
         ));
     _checkResponse(response);
 
@@ -448,15 +437,16 @@ class API {
     return User()
       ..balance = body['balance']
       ..balanceHistory = {now: 0}
-      ..email = body['id']
+      ..id = body['id']
       ..token = body['token']
-      ..inventory = body['stocks']
+      ..inventory = {}
       ..lastUpdatedBalance = now
       ..lastUpdatedBalanceHistory = now
       ..lastUpdatedInventory = now
       ..investedValue = 0
       ..totalValue = body['balance']
-      ..username = username;
+      ..username = username
+      ..portfolioChanges = Map<String, int>.from(body['portfolioChanges']);
   }
 
   // Future<double> totalBalance() async {

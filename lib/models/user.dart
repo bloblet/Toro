@@ -23,8 +23,6 @@ class User extends HiveObject {
     }
   }
 
-  User();
-
   @HiveField(0)
   String username;
 
@@ -41,7 +39,7 @@ class User extends HiveObject {
   DateTime lastUpdatedBalanceHistory;
 
   @HiveField(5)
-  List<Stock> inventory;
+  Map<String, Stock> inventory;
 
   @HiveField(6)
   DateTime lastUpdatedInventory;
@@ -56,13 +54,16 @@ class User extends HiveObject {
   String token;
 
   @HiveField(10)
-  String email;
+  String id;
 
   @HiveField(11)
   double investedValue;
 
   @HiveField(12)
   double totalValue;
+
+  @HiveField(12)
+  Map<String, int> portfolioChanges;
 
   String get formattedBalance {
     final f = NumberFormat.currency(locale: 'en_US', symbol: '\$');
@@ -88,11 +89,11 @@ class User extends HiveObject {
                 .difference(lastUpdatedInventory)
                 .compareTo(updateInventoryInterval) >=
             0) {
-      inventory = await API().fetchPortfolio(token, email);
+      inventory = await API().fetchPortfolio(token, id);
       lastUpdatedInventory = now;
       investedValue = 0;
 
-      for (Stock stock in inventory) {
+      for (Stock stock in inventory.values) {
         investedValue += stock.price * stock.quantity;
       }
       totalValue = balance + investedValue;
@@ -105,7 +106,7 @@ class User extends HiveObject {
     if (force == true ||
         now.difference(lastUpdatedBalance).compareTo(updateBalanceInterval) >=
             0) {
-      balance = await API().fetchBalance(token, email);
+      balance = await API().fetchBalance(token, id);
       lastUpdatedBalance = now;
       totalValue = investedValue + balance;
       unawaited(save());
@@ -113,17 +114,17 @@ class User extends HiveObject {
   }
 
   Future<void> getMissedBalanceHistory() async {
-    final missedBalances = await API()
-        .fetchBalanceHistory(lastUpdatedBalanceHistory, token, email);
-    balanceHistory.addAll(missedBalances);
-    if (missedBalances.length == 0) {
-      lastUpdatedInventory = DateTime.now();
-    } else {
-      List<DateTime> sorted = missedBalances.keys.toList()..sort();
+    // final missedBalances = await API()
+    //     .fetchBalanceHistory(lastUpdatedBalanceHistory, token, id);
+    // balanceHistory.addAll(missedBalances);
+    // if (missedBalances.length == 0) {
+    //   lastUpdatedInventory = DateTime.now();
+    // } else {
+    //   List<DateTime> sorted = missedBalances.keys.toList()..sort();
 
-      lastUpdatedInventory = sorted.last;
-    }
-    unawaited(save());
+    //   lastUpdatedInventory = sorted.last;
+    // }
+    // unawaited(save());
   }
 
   static Future<bool> signIn(
@@ -139,11 +140,9 @@ class User extends HiveObject {
   }
 
   static Future<bool> signUp(
-      {@required String email,
-      @required String password,
-      @required String username}) async {
+      {@required String username}) async {
     try {
-      final user = await API().signUp(email, password, username);
+      final user = await API().signUp(username);
       await AppInitializer().me.put('me', user);
       AppInitializer().startTimer();
       return true;
@@ -153,16 +152,14 @@ class User extends HiveObject {
   }
 
   Future<void> sellStock(String symbol, int quantity) async {
-    await API().sellStock(symbol, quantity, token, email);
+    await API().sellStock(symbol, quantity, token, id);
     unawaited(updateBalance(force: true));
     unawaited(updateInventory(force: true));
     unawaited(getMissedBalanceHistory());
   }
 
   Future<void> buyStock(String symbol, int quantity) async {
-    await API().buyStock(symbol, quantity, token, email);
-    unawaited(updateBalance(force: true));
-    unawaited(updateInventory(force: true));
-    unawaited(getMissedBalanceHistory());
+    await API().buyStock(symbol, quantity, token, id);
   }
+
 }

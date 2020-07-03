@@ -142,7 +142,7 @@ class PortfolioV2 extends StatelessWidget {
             builder: (context, child) {
               User user = Hive.box<User>('me').get('me');
               final List<Widget> children = [];
-              for (Stock stock in user?.inventory) {
+              for (Stock stock in user?.inventory?.values?.toList()) {
                 children.add(PortfolioStockElement(stock: stock));
                 children.add(PortfolioStockElement(stock: stock));
               }

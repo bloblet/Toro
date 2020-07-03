@@ -22,12 +22,12 @@ class UserAdapter extends TypeAdapter<User> {
       ..lastUpdatedBalance = fields[2] as DateTime
       ..balanceHistory = (fields[3] as Map)?.cast<DateTime, double>()
       ..lastUpdatedBalanceHistory = fields[4] as DateTime
-      ..inventory = (fields[5] as List)?.cast<Stock>()
+      ..inventory = (fields[5] as Map)?.cast<String, Stock>()
       ..lastUpdatedInventory = fields[6] as DateTime
       ..firebaseToken = fields[7] as String
       ..avatarURL = fields[8] as String
       ..token = fields[9] as String
-      ..email = fields[10] as String
+      ..id = fields[10] as String
       ..investedValue = fields[11] as double
       ..totalValue = fields[12] as double;
   }
@@ -57,7 +57,7 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(9)
       ..write(obj.token)
       ..writeByte(10)
-      ..write(obj.email)
+      ..write(obj.id)
       ..writeByte(11)
       ..write(obj.investedValue)
       ..writeByte(12)
