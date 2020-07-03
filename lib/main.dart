@@ -15,6 +15,7 @@ import 'components/trade.dart';
 import 'components/portfoliov2.dart';
 import 'components/stockInfo.dart';
 import 'components/summary.dart';
+import 'components/intro.dart';
 
 import 'models/stock.dart';
 import 'models/user.dart';
@@ -151,7 +152,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data.get('me') == null) {
               log('No user stored, going to login...');
-              return SignUpScreen();
+              return Intro();
             } else {
               log('Found user!');
               User me = snapshot.data.get('me');
