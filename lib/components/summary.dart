@@ -3,6 +3,7 @@ import 'package:fl_animated_linechart/fl_animated_linechart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:toro_models/toro_models.dart' hide User;
 
 import '../models/user.dart';
 import 'tabScaffold.dart';
@@ -85,7 +86,7 @@ class Summary extends StatelessWidget {
                       Text(
                         'As of ' +
                             DateFormat('h:m M/d/y')
-                                .format(me.lastUpdatedBalance),
+                                .format(DateTime.now()),
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -169,7 +170,10 @@ class SummaryChart extends StatelessWidget{
 
   final me = User.me;
   Map<DateTime, double> getChartData() {
-    final balanceHistory = me.balanceHistory;
+    final Map<DateTime, double> balanceHistory = {};
+    for (DateTime date in  me.portfolioChanges.keys) {
+      balanceHistory[date] = me.portfolioChanges[date].newBalance;
+    }
     if (balanceHistory.length == 1) {
       balanceHistory[DateTime.now()] = 0;
     }

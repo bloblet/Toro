@@ -1,20 +1,25 @@
+import 'package:toro_models/toro_models.dart' as models;
+
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:toro_models/toro_models.dart' hide User;
 import '../bloc/API.dart';
+import '../initializer.dart';
 import '../main.dart';
-import 'stock.dart';
-
-part 'user.g.dart';
 
 const updateInventoryInterval = const Duration(minutes: 1);
 const updateBalanceInterval = const Duration(minutes: 1);
 
-@HiveType(typeId: 0)
-class User extends HiveObject {
+class User extends models.User {
+  static DateTime lastUpdatedBalance;
+  FetchCache get fetchCache => AppInitializer?.fetchCache?.get('fetchCache');
+  static double investedValue;
+  static double totalValue;
+
   static User get me {
-    final me = AppInitializer()?.me?.get('me');
+    final me = AppInitializer?.me?.get('me');
     if (me == null) {
       print('Me is null');
       return User();
@@ -22,48 +27,6 @@ class User extends HiveObject {
       return me;
     }
   }
-
-  @HiveField(0)
-  String username;
-
-  @HiveField(1)
-  double balance;
-
-  @HiveField(2)
-  DateTime lastUpdatedBalance;
-
-  @HiveField(3)
-  Map<DateTime, double> balanceHistory;
-
-  @HiveField(4)
-  DateTime lastUpdatedBalanceHistory;
-
-  @HiveField(5)
-  Map<String, Stock> inventory;
-
-  @HiveField(6)
-  DateTime lastUpdatedInventory;
-
-  @HiveField(7)
-  String firebaseToken;
-
-  @HiveField(8)
-  String avatarURL;
-
-  @HiveField(9)
-  String token;
-
-  @HiveField(10)
-  String id;
-
-  @HiveField(11)
-  double investedValue;
-
-  @HiveField(12)
-  double totalValue;
-
-  @HiveField(12)
-  Map<String, int> portfolioChanges;
 
   String get formattedBalance {
     final f = NumberFormat.currency(locale: 'en_US', symbol: '\$');
@@ -82,18 +45,30 @@ class User extends HiveObject {
     return f.format(change);
   }
 
+  DateTime get lastUpdatedStocks => fetchCache.lastUpdatedStocks;
+
+  set lastUpdatedStocks(DateTime newValue) {
+    final f = fetchCache;
+    f.lastUpdatedStocks = newValue;
+    f.save();
+  }
+
   Future<void> updateInventory({bool force}) async {
     final now = DateTime.now();
     if (force == true ||
-        now
-                .difference(lastUpdatedInventory)
-                .compareTo(updateInventoryInterval) >=
+        now.difference(lastUpdatedStocks).compareTo(updateInventoryInterval) >=
             0) {
-      inventory = await API().fetchPortfolio(token, id);
-      lastUpdatedInventory = now;
+      final unparsedStocks = await API().fetchPortfolio(token, id);
+      final stocks = {};
+
+      for (String stock in unparsedStocks.keys) {
+        stocks[stock] = unparsedStocks[stock].quantity;
+      }
+
+      lastUpdatedStocks = now;
       investedValue = 0;
 
-      for (Stock stock in inventory.values) {
+      for (Stock stock in unparsedStocks.values) {
         investedValue += stock.price * stock.quantity;
       }
       totalValue = balance + investedValue;
@@ -131,7 +106,7 @@ class User extends HiveObject {
       {@required String email, @required String password}) async {
     try {
       final user = await API().signIn(email, password);
-      await AppInitializer().me.put('me', user);
+      await AppInitializer.me.put('me', user);
       AppInitializer().startTimer();
       return true;
     } on APIError {
@@ -139,11 +114,10 @@ class User extends HiveObject {
     }
   }
 
-  static Future<bool> signUp(
-      {@required String username}) async {
+  static Future<bool> signUp({@required String username}) async {
     try {
       final user = await API().signUp(username);
-      await AppInitializer().me.put('me', user);
+      await AppInitializer.me.put('me', user);
       AppInitializer().startTimer();
       return true;
     } on APIError {
@@ -161,5 +135,4 @@ class User extends HiveObject {
   Future<void> buyStock(String symbol, int quantity) async {
     await API().buyStock(symbol, quantity, token, id);
   }
-
 }

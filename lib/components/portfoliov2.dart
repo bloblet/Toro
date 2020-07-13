@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:toro_models/toro_models.dart' hide User;
 
-import '../models/stock.dart';
 import '../models/user.dart';
 
 import 'welcome_page_button.dart';
@@ -64,7 +64,7 @@ class PortfolioV2 extends StatelessWidget {
                   },
                 ),
                 title: Text(
-                  '\$${user.totalValue.toStringAsFixed(2)}',
+                  '\$${10000}',
                   style: GoogleFonts.raleway(
                     fontSize: 25,
                     fontFeatures: [
@@ -119,7 +119,7 @@ class PortfolioV2 extends StatelessWidget {
                             height: 16,
                           ),
                           Text(
-                            '\$${user.investedValue.toStringAsFixed(2)}',
+                            '\$${200000}',
                             style: GoogleFonts.raleway(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -142,9 +142,9 @@ class PortfolioV2 extends StatelessWidget {
             builder: (context, child) {
               User user = Hive.box<User>('me').get('me');
               final List<Widget> children = [];
-              for (Stock stock in user?.inventory?.values?.toList()) {
-                children.add(PortfolioStockElement(stock: stock));
-                children.add(PortfolioStockElement(stock: stock));
+              for (String stock in user?.stocks?.keys?.toList()) {
+                children.add(PortfolioStockElement(stock: stock, quantity: user.stocks[stock]));
+                children.add(PortfolioStockElement(stock: stock, quantity: user.stocks[stock]));
               }
               if (children.isEmpty) {
                 children.add(SizedBox(height: 16));

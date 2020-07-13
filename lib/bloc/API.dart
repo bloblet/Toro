@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:toro_models/toro_models.dart' hide User;
+import '../initializer.dart';
 import '../models/user.dart';
-import '../models/stock.dart';
 import '../utils.dart';
 
 /// Factory API class, no need to store it anywhere.
@@ -15,7 +15,7 @@ class API {
   static API _cache = API._();
 
   /// Current location of the stocks API
-  String _apiEndpoint = 'http://40.114.0.32/';
+  String _apiEndpoint = 'https://40.114.0.32/';
 
   static const debug = true;
 
@@ -27,6 +27,8 @@ class API {
   /// This is a constructor, so we can initialize our class in the static member [_cache]
   /// This should only run once, at the start of our app.
   API._();
+  final key = AppInitializer.remoteConfig.getString('key');
+
   Future<http.Response> _request(String url, String method,
       {Map<String, String> headers, String body}) async {
     log('Sending $method request to $url...');
@@ -224,6 +226,14 @@ class API {
     // return body;
   }
 
+  Future<Stock> getStock(String symbol) async {
+    final response = await get('${_apiEndpoint}stocks/$symbol');
+    _checkResponse(response);
+
+    final body = jsonDecode(response.body);
+    return Stock.fromJson(body);
+  }
+  
   Future<User> signIn(String id, String password) async {
     final response = await get('${_apiEndpoint}me',
         body: jsonEncode(
@@ -236,18 +246,17 @@ class API {
     _checkResponse(response);
 
     final body = jsonDecode(response.body);
-    final now = DateTime.now();
 
     return User()
       ..username = body['username']
       ..balance = body['balance']
-      ..balanceHistory = {now: body['balance']}
+      ..portfolioChanges = body['portfolioChanges']
       ..id = body['id']
       ..token = body['token']
-      ..inventory = body['stocks']
-      ..lastUpdatedBalance = now
-      ..lastUpdatedBalanceHistory = now
-      ..lastUpdatedInventory = now;
+      ..stocks = body['stocks'];
+      // ..lastUpdatedBalance = now
+      // ..lastUpdatedBalanceHistory = now
+      // ..lastUpdatedInventory = now;
   }
 
   Future<User> signUp(String username) async {
@@ -262,17 +271,14 @@ class API {
 
     return User()
       ..balance = body['balance']
-      ..balanceHistory = {now: 0}
+      ..portfolioChanges = {now: PortfolioChangeEvent()..oldBalance = 0..newBalance = 0..portfolioChange={}}
       ..id = body['id']
       ..token = body['token']
-      ..inventory = {}
-      ..lastUpdatedBalance = now
-      ..lastUpdatedBalanceHistory = now
-      ..lastUpdatedInventory = now
-      ..investedValue = 0
-      ..totalValue = body['balance']
-      ..username = username
-      ..portfolioChanges = Map<String, int>.from(body['portfolioChanges']);
+      ..stocks = {}
+      // ..lastUpdatedBalance = now
+      // ..lastUpdatedBalanceHistory = now
+      // ..lastUpdatedInventory = now
+      ..username = username;
   }
 
   // Future<double> totalBalance() async {

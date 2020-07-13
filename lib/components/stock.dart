@@ -1,16 +1,17 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:Stocklet/bloc/API.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../models/stock.dart';
+import 'package:provider/provider.dart';
+import 'package:toro_models/toro_models.dart';
 
 enum AppBarButtons { sortByAlpha, sortByGains, sortByLoss }
 
 class PortfolioBody extends StatelessWidget {
-  final List<Stock> data;
+  final Map<String, int> data;
   final ValueListenable<AppBarButtons> listenable;
 
   PortfolioBody({@required this.data, @required this.listenable});
@@ -18,27 +19,15 @@ class PortfolioBody extends StatelessWidget {
   List<Widget> generate(sortMethod) {
     final List<Widget> widgets = [];
 
-    if (sortMethod == AppBarButtons.sortByAlpha) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          stock1.symbol.compareTo(stock2.symbol));
-    } else if (sortMethod == AppBarButtons.sortByGains) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          (stock1.changesPercentage * -1)
-              .compareTo(stock2.changesPercentage * -1));
-    } else if (sortMethod == AppBarButtons.sortByLoss) {
-      this.data.sort((Stock stock1, Stock stock2) =>
-          stock1.changesPercentage.compareTo(stock2.changesPercentage));
-    }
-
-    for (Stock stock in this.data) {
-      widgets.add(PortfolioStockElement(stock: stock));
+    for (String stock in data.keys) {
+      widgets.add(PortfolioStockElement(stock: stock, quantity: data[stock]));
     }
     return widgets;
   }
 
   ListView generateColumn(value) {
     return ListView(
-      children: this.generate(value),
+      children: generate(value),
     );
   }
 
@@ -57,17 +46,20 @@ class PortfolioBody extends StatelessWidget {
 }
 
 class PortfolioStockElement extends StatefulWidget {
-  final Stock stock;
+  final String stock;
+  final int quantity;
 
-  PortfolioStockElement({@required this.stock});
+  PortfolioStockElement({@required this.stock, @required this.quantity});
 
   @override
   _PortfolioStockElementState createState() => _PortfolioStockElementState();
 }
 
 class _PortfolioStockElementState extends State<PortfolioStockElement> {
+  Stock stock;
+
   void sell() {
-    Navigator.pushNamed(context, 'displayStock', arguments: widget.stock);
+    Navigator.pushNamed(context, 'displayStock', arguments: stock);
   }
 
   void popUp(BuildContext context) {
@@ -84,7 +76,7 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[Text(this.widget.stock.name), Divider()],
+                  children: <Widget>[Text(this.widget.stock), Divider()],
                 ),
                 content: Container(
                   height: (MediaQuery.of(context).size.height / 2),
@@ -92,22 +84,22 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
                   child: ListView(
                     children: [
                       Text(
-                          'Today\'s Gain/Loss: ${((this.widget.stock.change * this.widget.stock.quantity).isNegative) ? "-" : "+"}\$${(this.widget.stock.change * this.widget.stock.quantity).abs().toStringAsFixed(2)}'),
+                          'Today\'s Gain/Loss: ${((stock.change * stock.quantity).isNegative) ? "-" : "+"}\$${(stock.change * stock.quantity).abs().toStringAsFixed(2)}'),
                       SizedBox(height: 3),
                       Text(
-                          'Price: \$${this.widget.stock.price.toStringAsFixed(2)}'),
-                      (this.widget.stock.change.isNegative)
+                          'Price: \$${stock.price.toStringAsFixed(2)}'),
+                      (stock.change.isNegative)
                           ? Text(
-                              'Change: -\$${this.widget.stock.change.toStringAsFixed(2)}')
+                              'Change: -\$${stock.change.toStringAsFixed(2)}')
                           : Text(
-                              'Change: +\$${this.widget.stock.change.toStringAsFixed(2)}'),
-                      (this.widget.stock.changesPercentage.isNegative)
+                              'Change: +\$${stock.change.toStringAsFixed(2)}'),
+                      (stock.changePercentage.isNegative)
                           ? Text(
-                              'Change percent: -\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}')
+                              'Change percent: -\$${stock.changePercentage.toStringAsFixed(2)}')
                           : Text(
-                              'Change percent: +\$${this.widget.stock.changesPercentage.toStringAsFixed(2)}'),
-                      Text('Open: ${this.widget.stock.open}'),
-                      Text('Quantity: ${this.widget.stock.quantity}'),
+                              'Change percent: +\$${stock.changePercentage.toStringAsFixed(2)}'),
+                      Text('Open: ${stock.open}'),
+                      Text('Quantity: ${stock.quantity}'),
                       SizedBox(height: 3),
                     ],
                   ),
@@ -125,35 +117,48 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
 
   @override
   Widget build(BuildContext context) {
+    if (stock == null) {
+      return FutureProvider.value(
+          value: API().getStock(widget.stock),
+          builder: (BuildContext context, _) {
+            stock = Provider.of<Stock>(context);
+            return buildChild(context);
+          });
+    } else {
+      return buildChild(context);
+    }
+  }
+
+  Widget buildChild(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Card(
-      color: (widget.stock.changesPercentage >= 0)
+      color: (stock.changePercentage >= 0)
           ? Color(0xFFC4FFC5)
           : Color.fromRGBO(255, 209, 208, 1),
       child: ListTile(
         leading: CircleAvatar(
           child: Transform.rotate(
-            angle: (widget.stock.changesPercentage.abs() >= 1.5)
+            angle: (stock.changePercentage.abs() >= 1.5)
                 ? 0
-                : (widget.stock.changesPercentage.abs() >= 0.01)
+                : (stock.changePercentage.abs() >= 0.01)
                     ? pi / 4
                     : pi / 2,
             child: Icon(
-              (widget.stock.changesPercentage >= 0)
+              (stock.changePercentage >= 0)
                   ? Icons.arrow_upward
                   : Icons.arrow_downward,
-              color: (widget.stock.changesPercentage >= 0)
+              color: (stock.changePercentage >= 0)
                   ? Color(0xFFE7E7E7)
                   : Color(0xFFDFDFDF),
             ),
           ),
           backgroundColor:
-              (widget.stock.changesPercentage >= 0) ? Colors.green : Colors.red,
+              (stock.changePercentage >= 0) ? Colors.green : Colors.red,
           radius: size.height / 37,
         ),
         title: Text(
-          widget.stock.symbol,
+          stock.symbol,
           style: GoogleFonts.raleway(
             fontWeight: FontWeight.w600,
             fontSize: 19,
@@ -162,7 +167,7 @@ class _PortfolioStockElementState extends State<PortfolioStockElement> {
             ],
           ),
         ),
-        subtitle: Text('${widget.stock.changesPercentage.toStringAsFixed(2)}%',
+        subtitle: Text('${stock.changePercentage.toStringAsFixed(2)}%',
             style: GoogleFonts.openSans()),
         trailing: Container(
           width: size.height / 5,

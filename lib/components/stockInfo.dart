@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sequence_animation/flutter_sequence_animation.dart';
 import 'package:provider/provider.dart';
-import '../models/stock.dart';
+import 'package:toro_models/toro_models.dart';
 
 import 'fadeOnScroll.dart';
 import 'tabScaffold.dart';

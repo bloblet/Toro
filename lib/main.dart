@@ -1,13 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:device_info/device_info.dart';
 
 import 'components/login.dart';
 import 'components/signup.dart';
@@ -17,107 +9,12 @@ import 'components/stockInfo.dart';
 import 'components/summary.dart';
 import 'components/intro.dart';
 
-import 'models/stock.dart';
+import 'initializer.dart';
 import 'models/user.dart';
 import 'utils.dart';
 
 void main() {
-  // Crashlytics.instance.enableInDevMode = true;
-
-  // Pass all uncaught errors from the framework to Crashlytics.
-  // FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(MyApp());
-}
-
-// TODO move to its own file
-class AppInitializer {
-  static AppInitializer _cache = AppInitializer._();
-  AppInitializer._();
-  factory AppInitializer() {
-    return _cache;
-  }
-
-  Box<User> me;
-  static bool hasInitialized = false;
-  static bool startedTimer = false;
-  static Timer timer;
-
-  void startTimer() {
-    if (!startedTimer) {
-      User user = me.get('me');
-      log('Starting timer');
-      timer = Timer.periodic(Duration(minutes: 1), (_) {
-        log('Updating');
-        user.getMissedBalanceHistory();
-        user.updateInventory(force: true);
-        user.updateBalance(force: true);
-      });
-      startedTimer = true;
-    }
-  }
-
-  Future<Box<User>> init(BuildContext context) async {
-    if (!hasInitialized) {
-      final id = await DeviceInfoPlugin().androidInfo;
-
-      log('ID is ${id.androidId}');
-
-      final start = DateTime.now();
-      log('Starting initialization');
-      FirebaseAdMob.instance
-          .initialize(appId: "ca-app-pub-6084013412591482~5356667331")
-          .then((v) =>
-              log('Firebase done... ${msDiff(DateTime.now(), start)}ms'));
-
-      final RemoteConfig remoteConfig = await RemoteConfig.instance;
-
-      final partsOfOneSignal = [];
-
-      OneSignal.shared
-          .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-        // TODO
-        final symbol = result.notification.payload.additionalData['symbol'];
-      });
-
-      OneSignal.shared
-          .setLogLevel(OSLogLevel.fatal, OSLogLevel.none)
-          .then((value) {
-        partsOfOneSignal.add(true);
-        if (partsOfOneSignal.length == 3) {
-          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
-        }
-      });
-
-      OneSignal.shared
-          .init("f88e9b0e-3c0b-4706-a032-080871499e12")
-          .then((value) {
-        partsOfOneSignal.add(true);
-        if (partsOfOneSignal.length == 3) {
-          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
-        }
-      });
-      OneSignal.shared
-          .setInFocusDisplayType(OSNotificationDisplayType.notification)
-          .then((value) {
-        partsOfOneSignal.add(true);
-        if (partsOfOneSignal.length == 3) {
-          log('OneSignal done... ${msDiff(DateTime.now(), start)}ms');
-        }
-      });
-
-      await Hive.initFlutter();
-      Hive.registerAdapter(UserAdapter());
-      Hive.registerAdapter(StockAdapter());
-      // If you need to test logging in, uncomment the next two lines
-      // await Hive.deleteBoxFromDisk('me');
-      // log('Deleted me box', type: Severity.warning);
-
-      me = await Hive.openBox<User>('me');
-      log('Hive done... ${msDiff(DateTime.now(), start)}ms');
-      hasInitialized = true;
-    }
-    return me;
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -156,12 +53,14 @@ class MyApp extends StatelessWidget {
             } else {
               log('Found user!');
               User me = snapshot.data.get('me');
+              initializer.initOnesignal(me);
+
               log('Updating info');
               me.getMissedBalanceHistory();
               me.updateInventory();
               me.updateBalance();
 
-              AppInitializer().startTimer();
+              initializer.startTimer();
 
               return Summary();
             }
