@@ -24,7 +24,7 @@ class AppInitializer {
   static Timer timer;
   static RemoteConfig remoteConfig;
   static Box<FetchCache> fetchCache;
-  
+
   void startTimer() {
     if (!startedTimer) {
       User user = me.get('me');
@@ -72,10 +72,11 @@ class AppInitializer {
       Hive.registerAdapter(UserAdapter());
       Hive.registerAdapter(StockAdapter());
       Hive.registerAdapter(UserSettingsAdapter());
+      Hive.registerAdapter(PortfolioChangeEventAdapter());
       Hive.registerAdapter(FetchCacheAdapter());
       // If you need to test logging in, uncomment the next two lines
-      // await Hive.deleteBoxFromDisk('me');
-      // log('Deleted me box', type: Severity.warning);
+      await Hive.deleteBoxFromDisk('me');
+      log('Deleted me box', type: Severity.warning);
 
       me = await Hive.openBox<User>('me');
       fetchCache = await Hive.openBox<FetchCache>('fetchCache');

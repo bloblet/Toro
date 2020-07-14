@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         future: initializer.init(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data.get('me') == null) {
+            if (snapshot.data?.get('me') == null) {
               log('No user stored, going to login...');
               return Intro();
             } else {

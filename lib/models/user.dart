@@ -17,6 +17,20 @@ class User extends models.User {
   FetchCache get fetchCache => AppInitializer?.fetchCache?.get('fetchCache');
   static double investedValue;
   static double totalValue;
+  static User fromJson(Map<String, dynamic> json) {
+    final um = models.User.fromJson(json);
+    return User()
+      ..balance = um.balance
+      ..email = um.email
+      ..friends = um.friends
+      ..id = um.id
+      ..portfolioChanges = um.portfolioChanges
+      ..settings = um.settings
+      ..stocks = um.stocks
+      ..token = um.token
+      ..username = um.username
+      ..watchedStocks = um.watchedStocks;
+  }
 
   static User get me {
     final me = AppInitializer?.me?.get('me');
@@ -81,7 +95,7 @@ class User extends models.User {
     if (force == true ||
         now.difference(lastUpdatedBalance).compareTo(updateBalanceInterval) >=
             0) {
-      balance = await API().fetchBalance(token, id);
+      balance = (await API().getMe()).balance;
       lastUpdatedBalance = now;
       totalValue = investedValue + balance;
       unawaited(save());

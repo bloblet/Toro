@@ -15,7 +15,7 @@ class API {
   static API _cache = API._();
 
   /// Current location of the stocks API
-  String _apiEndpoint = 'https://40.114.0.32/';
+  String _apiEndpoint = 'https://othertoro.bloblet.com/';
 
   static const debug = true;
 
@@ -26,8 +26,10 @@ class API {
 
   /// This is a constructor, so we can initialize our class in the static member [_cache]
   /// This should only run once, at the start of our app.
-  API._();
-  final key = AppInitializer.remoteConfig.getString('key');
+  API._() {
+    key = AppInitializer.remoteConfig.getString('key');
+  }
+  static String key;
 
   Future<http.Response> _request(String url, String method,
       {Map<String, String> headers, String body}) async {
@@ -36,7 +38,7 @@ class API {
     final request = http.Request(method, uri);
     request.body = body;
     request.headers['Content-Type'] = 'application/json';
-    request.headers['Key'] = '';
+    request.headers['Key'] = key;
     request.headers.addAll(headers ?? {});
     final start = DateTime.now();
     final _res = await request.send();
@@ -90,15 +92,6 @@ class API {
     }
   }
 
-  /// Queries the API for [symbol], and returns the corresponding stock.
-  Future<Stock> fetchStock(String symbol) async {
-    final response = await get('${_apiEndpoint}stocks',
-        body: jsonEncode({'symbol': symbol}));
-    _checkResponse(response);
-
-    return Stock.fromJson(jsonDecode(response.body));
-  }
-
   /// Fetches the latest portfolio from the API and returns a sorted list of the stocks.
   Future<Map<String, Stock>> fetchPortfolio(String token, String id) async {
     final Map<String, Stock> stocks = {};
@@ -126,40 +119,40 @@ class API {
     return stocks;
   }
 
-  Future<Map<DateTime, double>> fetchBalanceHistory(
-      DateTime lastFetched, String token, String id) async {
-    final response = await get(
-      '${_apiEndpoint}balanceHistory',
-      body: jsonEncode(
-        {
-          'token': token,
-          'id': id,
-          'lastBalance': lastFetched.toIso8601String(),
-        },
-      ),
-    );
+  // Future<Map<DateTime, double>> fetchBalanceHistory(
+  //     DateTime lastFetched, String token, String id) async {
+  //   final response = await get(
+  //     '${_apiEndpoint}balanceHistory',
+  //     body: jsonEncode(
+  //       {
+  //         'token': token,
+  //         'id': id,
+  //         'lastBalance': lastFetched.toIso8601String(),
+  //       },
+  //     ),
+  //   );
 
-    _checkResponse(response);
-    final Map body = jsonDecode(response.body);
+  //   _checkResponse(response);
+  //   final Map body = jsonDecode(response.body);
 
-    final Map<DateTime, double> missedBalances = {};
-    for (String date in body.keys) {
-      missedBalances[DateTime.parse(date)] = body[date];
-    }
+  //   final Map<DateTime, double> missedBalances = {};
+  //   for (String date in body.keys) {
+  //     missedBalances[DateTime.parse(date)] = body[date];
+  //   }
 
-    return missedBalances;
-  }
+  //   return missedBalances;
+  // }
 
   /// Fetches the user's latest balance from the server.
-  Future<double> fetchBalance(String token, String id) async {
-    final response =
-        await get('${_apiEndpoint}user/$id', headers: {'Token': token});
-    _checkResponse(response);
+  // Future<double> fetchBalance(String token, String id) async {
+  //   final response =
+  //       await get('${_apiEndpoint}user/$id', headers: {'Token': token});
+  //   _checkResponse(response);
 
-    final balance = jsonDecode(response.body)['balance'];
+  //   final balance = jsonDecode(response.body)['balance'];
 
-    return balance;
-  }
+  //   return balance;
+  // }
 
   Future<List<Stock>> sellStock(
       String symbol, int quantity, String token, String id) async {
@@ -217,6 +210,7 @@ class API {
   //   return jsonDecode(response.body);
   // }
 
+  // TODO this actually works \o/
   Future<List> search(String term) async {
     // final response =
     // await get('${_apiEndpoint}search', jsonEncode({'term': term}));
@@ -233,7 +227,7 @@ class API {
     final body = jsonDecode(response.body);
     return Stock.fromJson(body);
   }
-  
+
   Future<User> signIn(String id, String password) async {
     final response = await get('${_apiEndpoint}me',
         body: jsonEncode(
@@ -279,6 +273,16 @@ class API {
       // ..lastUpdatedBalanceHistory = now
       // ..lastUpdatedInventory = now
       ..username = username;
+  }
+
+  Future<User> getMe() async {
+    final response = await get('${_apiEndpoint}users/${User.me.id}');
+
+    _checkResponse(response);
+
+    final body = jsonDecode(response.body);
+
+    return User.fromJson(body);
   }
 
   // Future<double> totalBalance() async {

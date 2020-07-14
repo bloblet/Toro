@@ -329,7 +329,7 @@ packages:
     description:
       path: "."
       ref: developer
-      resolved-ref: b57cb10e374ede115ff49b4fe035911d38985c2f
+      resolved-ref: b1fc0f39319fdf549e8e91de41b47586f7523af6
       url: "git@github.com:bloblet/toro_models.git"
     source: git
     version: "0.5.2"

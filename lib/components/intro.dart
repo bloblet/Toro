@@ -45,6 +45,6 @@ class Intro extends StatelessWidget {
       titleTextStyle: GoogleFonts.raleway(fontSize: 40, color: Colors.white),
       bodyTextStyle: GoogleFonts.raleway(fontSize: 25, color: Colors.white),
     );
-    return IntroViewsFlutter([page1, page2]);
+    return IntroViewsFlutter([page1, page2], onTapDoneButton: () => Navigator.popAndPushNamed(context, 'signupScreen'),);
   }
 }

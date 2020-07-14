@@ -33,7 +33,7 @@ class CircularImage extends StatelessWidget {
 
 class MenuScreen extends StatelessWidget {
   final String imageUrl =
-      "https://scontent-ort2-2.xx.fbcdn.net/v/t1.0-9/1915547_202232795153_5948859_n.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_ohc=5kx_BQ11ZwkAX8mSZQr&_nc_ht=scontent-ort2-2.xx&oh=53d4028f6c3eb6d2791aede4bc494abe&oe=5F00BB26";
+      "https://cdn.discordapp.com/attachments/708048555537072148/732398937750634506/IMG.jpeg";
 
   final List<MenuItem> options = [
     MenuItem(Icons.assessment, 'Summary', 'summary'),
@@ -47,7 +47,6 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanUpdate: (details) {
-        //on swiping left
         if (details.delta.dx < -6) {
           Provider.of<MenuController>(context, listen: false).toggle();
         }
@@ -58,8 +57,6 @@ class MenuScreen extends StatelessWidget {
             left: 32,
             bottom: 8,
             right: MediaQuery.of(context).size.width / 2.9),
-        // color: Color(0xff454dff),
-        // color: Color(0xffAF4CABff),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
