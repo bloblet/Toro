@@ -1,4 +1,4 @@
-# stocklet
+# Toro
 
 A new Flutter project.
 
